@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.env*.local
+.vercel
+test-results
+playwright-report
+*.tsbuildinfo
+next-env.d.ts
+.claude/skills/**/__pycache__
