@@ -26,6 +26,14 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 - `app/api/*` – geocode (Nominatim), lookup (PostGIS RPC), layers, qa, explain, checks, quarters, status.
 - `scripts/import-kml.mjs` – המרת KML/GeoJSON מהתשריט ל-SQL עבור `binyanit_layers`.
 
+## עמוד צורכי ציבור (/program, /program/[id])
+- מקור אמת: `src/data/program.json` (נספח הפרוגרמה, 30.6.2025). כל מספר במסך ממופה לשדה; אין חישובים מלבד חיפוש ערכי קבוצה (י'+י"א+י"ג). אפיון: `docs/PROGRAM_SPEC.md`.
+- PDF: `public/docs/program-appendix.pdf`, קישורי מקור `#page=N` (עמ' 3 מתודולוגיה, 4 קיבולת, 5 כיתות לא מנוצלות, 6-13 רובעים, 14 חינוך, 15 קהילה, 16 כושר נשיאה).
+- פוליגונים: `public/data/rovaim.geojson`, משוערים (approximate:true): וורונוי מנקודות רובע ב-OSM, חתוך לגבול התכנית הרשמי. מע"ר צפון: נקודה משוערת. להחליף בשכבת GIS עירונית.
+- מפת רקע OpenFreeMap (positron), עם נפילה לרקע ריק אם לא נטענה. פיצ' 55, fill-extrusion לפי added_max_5y × 0.5 מ'.
+- "שנת הקמה": ב-JSON יש מקרא בלבד, בלי שיוך לרובע, ולכן מוצג מצב "אין נתון".
+- טבלאות: TanStack, מיון בכל עמודה (לחיצה ראשונה תמיד עולה), ריקים בסוף. מצב כהה: טוקנים ב-:root עם prefers-color-scheme.
+
 ## Supabase
 - כל הטבלאות בקידומת `binyanit_` (פרויקט משותף). RLS פעיל: קריאה ציבורית למסמכים, שכבות ומכסות; הוספה אנונימית בלבד ל-address_checks ו-qa_logs; אין כתיבה אחרת דרך anon.
 - פונקציות: `binyanit_lookup(lon, lat)`, `binyanit_layer_geojson(kind)`.

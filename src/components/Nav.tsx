@@ -6,6 +6,7 @@ const LINKS = [
   { href: "/", label: "ראשי" },
   { href: "/plan/603-0972307", label: "התכנית" },
   { href: "/check", label: "בדיקת כתובת" },
+  { href: "/program", label: "צורכי ציבור" },
   { href: "/documents", label: "מסמכים" },
   { href: "/qa", label: "שאלות על התכנית" },
   { href: "/quarters", label: "מכסות ברובעים" },
@@ -16,7 +17,7 @@ export function Nav() {
   return (
     <nav className="nav" aria-label="ניווט ראשי">
       {LINKS.map((l) => (
-        <Link key={l.href} href={l.href} aria-current={path === l.href || (l.href.startsWith("/plan") && path.startsWith("/plan")) ? "page" : undefined}>
+        <Link key={l.href} href={l.href} aria-current={path === l.href || (l.href !== "/" && path.startsWith(l.href + "/")) || (l.href.startsWith("/plan") && path.startsWith("/plan")) ? "page" : undefined}>
           {l.label}
         </Link>
       ))}
