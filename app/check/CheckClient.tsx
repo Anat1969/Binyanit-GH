@@ -5,6 +5,7 @@ import { InputError, computePotential, type BuildingInput, type PotentialReport,
 import { QUARTERS, STREET_CLASS_LABEL } from "@/content/plan-meta";
 import { RouteCard } from "@/components/RouteCard";
 import { ReportSheet } from "@/components/ReportSheet";
+import { UnitsCompare } from "@/components/UnitsCompare";
 import { summarize } from "@/lib/summary";
 import { downloadPdf } from "@/lib/pdf";
 
@@ -502,6 +503,7 @@ export default function CheckClient() {
                 <RouteCard key={r.route} r={r} b={report.input} index={i} />
               ))}
             </div>
+            {report.globalBlockers.length === 0 && report.input.residential && <UnitsCompare rep={report} />}
             <div className="grid grid-2">
               <div className="card stack">
                 <div className="label">במילים</div>

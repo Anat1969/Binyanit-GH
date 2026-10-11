@@ -124,6 +124,15 @@ test("check: full flow – geocode, lookup, compute, explain, PDF, anonymous log
   await expect(demolish).toContainText("5,940"); // 540 x 11
   await expect(page.locator("[data-testid^=route-] svg")).toHaveCount(3);
 
+  // routes compared by new apartments per existing apartment
+  const units = page.getByTestId("units-compare");
+  await expect(units).toContainText("דירות חדשות לכל דירה קיימת");
+  await expect(units).toContainText("פינוי זמני");
+  await expect(page.getByTestId("units-verdict")).toContainText("הריסה ובנייה מחדש");
+  const avg = units.locator('input[name="avgNewUnitArea"]');
+  await avg.fill("120");
+  await expect(avg).toHaveValue("120");
+
   // notes toggle
   await demolish.getByText(/הערות/).click();
   await expect(demolish).toContainText("20%");
@@ -263,6 +272,9 @@ test("plan story page: chapters, facts, sources and CTA", async ({ page }) => {
   await expect(page.locator(".chapter")).toHaveCount(7);
   await expect(page.locator(".fact").first()).toBeVisible();
   await expect(page.getByText("לפי דיווח").first()).toBeVisible();
+  const rules = page.getByTestId("table-routes");
+  await expect(rules.locator("tbody tr")).toHaveCount(8);
+  await expect(rules).toContainText("פינוי זמני לתקופת הבנייה");
   await page.getByRole("navigation", { name: "פרקים" }).getByRole("link", { name: "הרחוב קובע" }).click();
   await expect(page).toHaveURL(/#street$/);
   await expect(page.locator("#street")).toBeInViewport();
