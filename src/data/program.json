@@ -1,0 +1,1365 @@
+{
+  "meta": {
+    "plan_number": "603-0972307",
+    "plan_name": "תכנית עירונית להתחדשות בניינים טעונים חיזוק ומיגון, אשדוד",
+    "source_document": "נספח פרוגרמה לצורכי ציבור וקיבולת, ענת ברקאי תכנון ערים חברתי, 30.6.2025",
+    "source_file": "603-0972307_פרוגרמה_לשטחי_ציבור_חתום_לאישור.pdf",
+    "approval": "אושרה בוועדה המחוזית דרום, 26/08/2026",
+    "data_status": "נתונים כפי שמופיעים בנספח. סימון data_flags בכל רובע מציין סתירה פנימית במקור שיש לאמת מול צוות התכנון.",
+    "methodology": {
+      "realistic_scenario": {
+        "units": 7415,
+        "assumptions": "15% מיח\"ד ללא מיגון במסלול מיגון, 50% מיח\"ד ללא עמידה בתקן 413 במסלול חיזוק ומיגון, 15% נוספים במסלול הריסה ובנייה"
+      },
+      "max_5_years": {
+        "units": 5000,
+        "assumptions": "כ-600 היתרים לשנה לפי קצב תמ\"א 38 + תוספת מערכת, סה\"כ כ-1,000 בשנה"
+      },
+      "full_capacity_units": 13627,
+      "limiting_factor": "כיתות בית ספר יסודי בטווח הליכה. רובעים סמוכים פותרים זה לזה לפי אזורי רישום.",
+      "household": {
+        "general": {
+          "household_size": 3.3,
+          "cohort_pct": 2.0,
+          "primary_years": 6,
+          "class_size": 27
+        },
+        "haredi": {
+          "household_size": 5.5,
+          "cohort_pct": 3.3,
+          "primary_years": 8,
+          "class_size_boys": 20,
+          "class_size_girls": 27
+        }
+      },
+      "guide": "מדריך הקצאות צרכי ציבור 2018",
+      "threshold_note": "ברובעים עם תוספת מתחת ל-50 יח\"ד לא מוצגים פתרונות חינוך"
+    },
+    "carrying_capacity_legend": [
+      {
+        "key": "positive",
+        "label": "כושר נשיאה חיובי עם יתרה",
+        "color": "#00B050",
+        "opacity": 0.45
+      },
+      {
+        "key": "partial",
+        "label": "כושר נשיאה חלקי (פער של עד 5 כיתות)",
+        "color": "#C6E0B4",
+        "opacity": 0.55
+      },
+      {
+        "key": "negative_with_solution",
+        "label": "כושר נשיאה שלילי עם מענים מוצעים",
+        "color": "#FFE699",
+        "opacity": 0.55
+      },
+      {
+        "key": "none",
+        "label": "ללא כושר נשיאה",
+        "color": "#FFFFFF",
+        "opacity": 0.35,
+        "stroke": "#C00000"
+      }
+    ],
+    "construction_era_legend": {
+      "source": "מצגת לפורום תכנון, יולי 2025, שקף מפת שנות הקמה",
+      "classes": [
+        {
+          "label": "עד 1965",
+          "color": "#B9A0C8"
+        },
+        {
+          "label": "1965-1966",
+          "color": "#D9C6E3"
+        },
+        {
+          "label": "1966-1990",
+          "color": "#F2DDB6"
+        },
+        {
+          "label": "1991-2008",
+          "color": "#CDE8EE"
+        },
+        {
+          "label": "אחרי 2008",
+          "color": "#9CC9CF"
+        }
+      ],
+      "note": "הצבעים נדגמו מהשקף. לאמת מול קובץ ה-GIS המקורי."
+    }
+  },
+  "totals": {
+    "existing_units_for_renewal": 22565,
+    "added_units_max_5y": 5000,
+    "added_units_realistic": 7415,
+    "added_population_max_5y": 19005,
+    "children_max_5y": 462,
+    "education_classes_max_5y": {
+      "daycare": 42,
+      "daycare_special": 5,
+      "kindergarten": 46,
+      "kindergarten_special": 5,
+      "primary_haredi_boys": 41,
+      "primary_haredi_girls": 31,
+      "primary_state": 57,
+      "primary_special": 6,
+      "secondary_haredi_boys": 41,
+      "secondary_haredi_girls": 31,
+      "secondary_state": 57,
+      "secondary_special": 8
+    },
+    "community_sqm_max_5y": {
+      "community_wing": 1500,
+      "youth_club": 1350,
+      "senior_club": 400,
+      "family_health": 800,
+      "clinic": 1987,
+      "synagogue": 3436,
+      "mikveh": 315
+    },
+    "program_summary": [
+      "אגף קהילתי: 3 × 500 מ\"ר",
+      "מועדון נוער: 4",
+      "מועדון לאזרח הוותיק: 3",
+      "בריאות: 3 × 500 מ\"ר",
+      "בית כנסת: 9 × 350 מ\"ר",
+      "מקווה נשים: 1 × 4 בורות טבילה"
+    ],
+    "ground_floor_note": "התכנית מאפשרת שימושים מעורבים בקומות הקרקע לצרכים ציבוריים קטנים: גיל הרך, מעונות, דת ובריאות, בתיאום עם הרשות המקומית לפי צורכי הרובע."
+  },
+  "rovaim": [
+    {
+      "id": "mar-tzafon",
+      "name": "מע\"ר צפון",
+      "pop_general": 1.0,
+      "pop_haredi": 0,
+      "units_existing_for_renewal": 215,
+      "added_max_5y": 40,
+      "added_realistic": 59,
+      "added_population": 132,
+      "children": 3,
+      "classes": {
+        "daycare": 0,
+        "kindergarten": 0,
+        "primary_state": 1,
+        "secondary_state": 1
+      },
+      "community_group": "A-B-tzafon-D-E",
+      "carrying_capacity": null,
+      "summary": "תוספת מתחת ל-50 יח\"ד. לא מוצג פתרון חינוך.",
+      "source_pages": [
+        4,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "a",
+      "name": "רובע א'",
+      "pop_general": 1.0,
+      "pop_haredi": 0,
+      "units_existing_for_renewal": 1940,
+      "added_max_5y": 594,
+      "added_realistic": 882,
+      "units": {
+        "existing": 6389,
+        "approved_renewal_plans": 1177,
+        "added_by_renewal": 2247,
+        "binyanit_phase_a": 594
+      },
+      "assumptions": {
+        "added_units": 4018,
+        "household": 3.3,
+        "cohort_pct": 2.0,
+        "cohort_size": 265.2
+      },
+      "added_population": 1960,
+      "children": 39,
+      "classes": {
+        "daycare": 4,
+        "daycare_special": 0,
+        "kindergarten": 4,
+        "kindergarten_special": 0,
+        "primary_state": 9,
+        "primary_special": 0,
+        "secondary_state": 9,
+        "secondary_special": 1
+      },
+      "primary_demand": {
+        "renewal_plans": 50,
+        "binyanit": 9,
+        "total": 59
+      },
+      "schools": [
+        {
+          "name": "גאולים",
+          "home_classes": 18,
+          "occupancy": 14,
+          "special_ed": 3,
+          "free": 4
+        },
+        {
+          "name": "יהל\"ם",
+          "home_classes": 18,
+          "occupancy": 8,
+          "special_ed": 2,
+          "free": 10
+        },
+        {
+          "name": "שובו ואילנות",
+          "home_classes": 16,
+          "occupancy": 8,
+          "special_ed": 8,
+          "free": 0
+        }
+      ],
+      "renewal_projects": [
+        {
+          "name": "אח\"י אילת",
+          "added_units": 840
+        },
+        {
+          "name": "הרצל-קדש",
+          "added_units": 255
+        },
+        {
+          "name": "הנשיא",
+          "added_units": 837
+        },
+        {
+          "name": "מרכז א'",
+          "added_units": 315
+        }
+      ],
+      "new_schools_proposed": [
+        {
+          "name": "יצחק הנשיא",
+          "classes": 24
+        },
+        {
+          "name": "הדקל",
+          "classes": 12
+        },
+        {
+          "name": "אח\"י אילת",
+          "classes": 18
+        },
+        {
+          "name": "האיצטדיון",
+          "classes": 18
+        }
+      ],
+      "potential": {
+        "binyanit": 14,
+        "renewal": 72,
+        "total": 86
+      },
+      "community_sqm": {
+        "synagogue": 106,
+        "clinic": 196,
+        "family_health": 75
+      },
+      "carrying_capacity": {
+        "demand": 9,
+        "renewal_demand": 50,
+        "total_demand": 59,
+        "supply": 14,
+        "balance": 5,
+        "class": "positive",
+        "min_threshold": "ללא מגבלה",
+        "proposed_solution": null
+      },
+      "summary": "נדרשות 9 כיתות יסודי לבניינית. קיים מענה של 14 כיתות אם פנויות בבתי ספר ברובע.",
+      "source_pages": [
+        4,
+        6,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "b",
+      "name": "רובע ב'",
+      "pop_general": 1.0,
+      "pop_haredi": 0,
+      "units_existing_for_renewal": 1536,
+      "added_max_5y": 732,
+      "added_realistic": 1085,
+      "units": {
+        "existing": 3805,
+        "approved_renewal_plans": 0,
+        "added_by_renewal": 3921,
+        "binyanit_phase_a": 732
+      },
+      "assumptions": {
+        "added_units": 4653,
+        "household": 3.3,
+        "cohort_pct": 2.0,
+        "cohort_size": 307.1
+      },
+      "added_population": 2414,
+      "children": 48,
+      "classes": {
+        "daycare": 4,
+        "daycare_special": 0,
+        "kindergarten": 5,
+        "kindergarten_special": 0,
+        "primary_state": 11,
+        "primary_special": 1,
+        "secondary_state": 11,
+        "secondary_special": 1
+      },
+      "primary_demand": {
+        "renewal_plans": 58,
+        "binyanit": 11,
+        "total": 68
+      },
+      "schools": [
+        {
+          "name": "אחדות",
+          "home_classes": 16,
+          "occupancy": 7,
+          "special_ed": 1,
+          "free": 9
+        },
+        {
+          "name": "מוריה",
+          "home_classes": 18,
+          "occupancy": 6,
+          "special_ed": null,
+          "free": null
+        }
+      ],
+      "renewal_projects": [
+        {
+          "name": "רמב\"ם",
+          "added_units": 498
+        },
+        {
+          "name": "המעפילים",
+          "added_units": 1868
+        },
+        {
+          "name": "הרב מיימון",
+          "added_units": 1113
+        },
+        {
+          "name": "מתחם בית המשפט",
+          "added_units": 442
+        }
+      ],
+      "new_schools_proposed": [
+        {
+          "name": "רמב\"ם",
+          "classes": 18
+        },
+        {
+          "name": "המעפילים",
+          "classes": 18
+        },
+        {
+          "name": "הרב מיימון",
+          "classes": 18
+        },
+        {
+          "name": "מתחם בית המשפט",
+          "classes": 18
+        }
+      ],
+      "potential": {
+        "binyanit": 9,
+        "renewal": 72,
+        "total": 81
+      },
+      "community_sqm": {
+        "synagogue": 130,
+        "clinic": 241,
+        "family_health": 75,
+        "mikveh": 65
+      },
+      "carrying_capacity": {
+        "demand": 11,
+        "renewal_demand": 58,
+        "total_demand": 68,
+        "supply": 9,
+        "balance": -2,
+        "class": "partial",
+        "min_threshold": "ללא מגבלה",
+        "proposed_solution": null
+      },
+      "summary": "נדרשות 11 כיתות יסודי לבניינית. קיים מענה של 9 כיתות אם.",
+      "data_flags": [
+        "מוריה: 18 כיתות אם ותפוסה 6, אך לא נספרה ככיתות פנויות. לאמת."
+      ],
+      "source_pages": [
+        4,
+        7,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "g",
+      "name": "רובע ג'",
+      "pop_general": 0.29,
+      "pop_haredi": 0.71,
+      "units_existing_for_renewal": 2589,
+      "added_max_5y": 1035,
+      "added_realistic": 1535,
+      "units": {
+        "existing": 4995,
+        "approved_renewal_plans": 880,
+        "added_by_renewal": 0,
+        "binyanit_phase_a": 1035
+      },
+      "assumptions": {
+        "renewal_split": {
+          "general": 255,
+          "haredi": 625
+        },
+        "binyanit_split": {
+          "general": 300,
+          "haredi": 735
+        },
+        "general": {
+          "household": 3.3,
+          "cohort_pct": 2.0,
+          "cohort_size": 36.7
+        },
+        "haredi": {
+          "household": 5.5,
+          "cohort_pct": 3.3,
+          "cohort_size": 246.8
+        }
+      },
+      "added_population": 5032,
+      "children": 153,
+      "classes": {
+        "daycare": 14,
+        "daycare_special": 2,
+        "kindergarten": 15,
+        "kindergarten_special": 2,
+        "primary_haredi_boys": 27,
+        "primary_haredi_girls": 20,
+        "primary_state": 4,
+        "primary_special": 2,
+        "secondary_haredi_boys": 27,
+        "secondary_haredi_girls": 20,
+        "secondary_state": 4,
+        "secondary_special": 3
+      },
+      "primary_demand": {
+        "general": {
+          "renewal_plans": 4,
+          "binyanit": 4
+        },
+        "haredi_boys": {
+          "renewal_plans": 23,
+          "binyanit": 27
+        },
+        "haredi_girls": {
+          "renewal_plans": 17,
+          "binyanit": 20
+        },
+        "renewal_plans": 43,
+        "binyanit": 51,
+        "total": 94
+      },
+      "schools": [
+        {
+          "name": "המגינים",
+          "home_classes": 8,
+          "occupancy": 5,
+          "special_ed": 3,
+          "free": null
+        }
+      ],
+      "potential": {
+        "binyanit": 20,
+        "binyanit_note": "קרוואנים במתחם המגינים, בפוטנציאל בינוי על אותה משבצת קרקע",
+        "renewal": 0,
+        "total": 20
+      },
+      "community_sqm": {
+        "community_wing": 500,
+        "youth_club": 400,
+        "senior_club": 150,
+        "family_health": 200,
+        "clinic": 1000,
+        "synagogue": 2000,
+        "mikveh": 130,
+        "_note": "מוקצה במשותף לרובעים ג', ז'"
+      },
+      "carrying_capacity": {
+        "demand": 51,
+        "renewal_demand": 17,
+        "total_demand": 68,
+        "supply": 20,
+        "balance": -31,
+        "class": "negative_with_solution",
+        "min_threshold": 400,
+        "proposed_solution": "מענה לכ-20 כיתות על בסיס פינוי מתחם הקרוואנים. שווה ערך לכ-400 יח\"ד."
+      },
+      "summary": "נדרשות 51 כיתות יסודי לבניינית. מתחם המגינים מאפשר בית ספר בן 20 כיתות לאחר פינוי הקרוואנים, מענה לכ-200 יח\"ד לפי עמוד הרובע.",
+      "data_flags": [
+        "עמוד הרובע: 20 כיתות = כ-200 יח\"ד. טבלת כושר הנשיאה: שווה ערך לכ-400 יח\"ד. סתירה לאימות.",
+        "עמוד הרובע: 43 כיתות לתוכניות התחדשות, 94 סה\"כ. טבלת כושר הנשיאה: 17 ו-68. סתירה לאימות.",
+        "קושי במיפוי בתי ספר במגזר החרדי (הערה 4 במקור)."
+      ],
+      "source_pages": [
+        4,
+        8,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "d",
+      "name": "רובע ד'",
+      "pop_general": 1.0,
+      "pop_haredi": 0,
+      "units_existing_for_renewal": 2854,
+      "added_max_5y": 929,
+      "added_realistic": 1378,
+      "units": {
+        "existing": 4890,
+        "approved_renewal_plans": 532,
+        "added_by_renewal": 140,
+        "binyanit_phase_a": 929
+      },
+      "assumptions": {
+        "added_units": 1601,
+        "household": 3.3,
+        "cohort_pct": 2.0,
+        "cohort_size": 105.7
+      },
+      "added_population": 3066,
+      "children": 61,
+      "classes": {
+        "daycare": 6,
+        "daycare_special": 1,
+        "kindergarten": 6,
+        "kindergarten_special": 1,
+        "primary_state": 14,
+        "primary_special": 1,
+        "secondary_state": 14,
+        "secondary_special": 1
+      },
+      "primary_demand": {
+        "renewal_plans": 10,
+        "binyanit": 14,
+        "total": 24
+      },
+      "schools": [
+        {
+          "name": "ארזים",
+          "home_classes": 18,
+          "occupancy": 16,
+          "special_ed": 3,
+          "free": null
+        },
+        {
+          "name": "רעים",
+          "home_classes": 18,
+          "occupancy": 15,
+          "special_ed": 2,
+          "free": 3
+        },
+        {
+          "name": "שחר",
+          "home_classes": 18,
+          "occupancy": 17,
+          "special_ed": 2,
+          "free": 1
+        }
+      ],
+      "renewal_projects": [
+        {
+          "name": "הרב שאולי - אביסרור",
+          "added_units": 140
+        }
+      ],
+      "new_schools_proposed": [
+        {
+          "name": "בי\"ס הדר לשעבר במתחם מחוננים",
+          "classes": 18
+        }
+      ],
+      "potential": {
+        "binyanit": 4,
+        "renewal": 18,
+        "total": 22
+      },
+      "community_sqm": {
+        "synagogue": 200,
+        "clinic": 400,
+        "family_health": 150,
+        "mikveh": 65,
+        "_note": "מוקצה במשותף לרובעים ד', ה'"
+      },
+      "carrying_capacity": {
+        "demand": 14,
+        "renewal_demand": 10,
+        "total_demand": 23,
+        "supply": 22,
+        "balance": -10,
+        "class": "negative_with_solution",
+        "min_threshold": 1200,
+        "proposed_solution": "מענה ל-18 כיתות במגרש ציבורי קיים ברחוב הרב שאולי 8. שווה ערך לכ-1,200 יח\"ד."
+      },
+      "summary": "נדרשות 14 כיתות יסודי לבניינית. 4 כיתות אם פנויות ובית ספר נוסף עתיד להיבנות.",
+      "data_flags": [
+        "סה\"כ נדרשות: 24 בעמוד הרובע, 23 בטבלת כושר הנשיאה."
+      ],
+      "source_pages": [
+        4,
+        9,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "h",
+      "name": "רובע ה'",
+      "pop_general": 1.0,
+      "pop_haredi": 0,
+      "units_existing_for_renewal": 1330,
+      "added_max_5y": 237,
+      "added_realistic": 351,
+      "units": {
+        "existing": 4892,
+        "approved_renewal_plans": 1196,
+        "added_by_renewal": 3416,
+        "binyanit_phase_a": 237
+      },
+      "assumptions": {
+        "added_units": 4849,
+        "household": 3.3,
+        "cohort_pct": 2.0,
+        "cohort_size": 320.0
+      },
+      "added_population": 781,
+      "children": 16,
+      "classes": {
+        "daycare": 1,
+        "kindergarten": 2,
+        "primary_state": 3,
+        "secondary_state": 3
+      },
+      "primary_demand": {
+        "renewal_plans": 68,
+        "binyanit": 3,
+        "total": 71
+      },
+      "schools": [
+        {
+          "name": "חזון יעקב",
+          "home_classes": 12,
+          "occupancy": 10,
+          "special_ed": null,
+          "free": 2
+        },
+        {
+          "name": "רננים",
+          "home_classes": 18,
+          "occupancy": 16,
+          "special_ed": 2,
+          "free": null
+        },
+        {
+          "name": "שזר",
+          "home_classes": 12,
+          "occupancy": 12,
+          "special_ed": 2,
+          "free": null
+        }
+      ],
+      "renewal_projects": [
+        {
+          "name": "נאות ספיר",
+          "added_units": 700
+        },
+        {
+          "name": "גאופונוב",
+          "added_units": 588
+        },
+        {
+          "name": "אחד העם",
+          "added_units": 420
+        }
+      ],
+      "new_schools_proposed": [
+        {
+          "name": "נאות ספיר",
+          "classes": 18
+        },
+        {
+          "name": "לב אשדוד",
+          "classes": 12
+        },
+        {
+          "name": "מרגנית",
+          "classes": 18
+        }
+      ],
+      "potential": {
+        "binyanit": 2,
+        "renewal": 48,
+        "total": 50
+      },
+      "community_sqm": {
+        "_note": "מוקצה במשותף עם רובע ד'"
+      },
+      "carrying_capacity": {
+        "demand": 3,
+        "renewal_demand": 68,
+        "total_demand": 71,
+        "supply": 2,
+        "balance": -1,
+        "class": "partial",
+        "min_threshold": "ללא מגבלה",
+        "proposed_solution": null
+      },
+      "summary": "נדרשות 3 כיתות יסודי לבניינית. 2 כיתות אם פנויות.",
+      "data_flags": [
+        "יח\"ד תוספתיות בעמוד: 1,708 בטבלת הפרויקטים לעומת 3,416 בסיכום."
+      ],
+      "source_pages": [
+        4,
+        10,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "v",
+      "name": "רובע ו'",
+      "pop_general": 0.65,
+      "pop_haredi": 0.35,
+      "units_existing_for_renewal": 1484,
+      "added_max_5y": 707,
+      "added_realistic": 1048,
+      "units": {
+        "existing": 3876,
+        "approved_renewal_plans": 120,
+        "added_by_renewal": 637,
+        "binyanit_phase_a": 707
+      },
+      "assumptions": {
+        "renewal_split": {
+          "general": 492,
+          "haredi": 265
+        },
+        "binyanit_split": {
+          "general": 460,
+          "haredi": 247
+        },
+        "general": {
+          "household": 3.3,
+          "cohort_pct": 2.0,
+          "cohort_size": 32.5
+        },
+        "haredi": {
+          "household": 5.5,
+          "cohort_pct": 3.3,
+          "cohort_size": 48.1
+        }
+      },
+      "added_population": 2876,
+      "children": 75,
+      "classes": {
+        "daycare": 7,
+        "daycare_special": 1,
+        "kindergarten": 8,
+        "kindergarten_special": 1,
+        "primary_haredi_boys": 9,
+        "primary_haredi_girls": 7,
+        "primary_state": 7,
+        "primary_special": 1,
+        "secondary_haredi_boys": 9,
+        "secondary_haredi_girls": 7,
+        "secondary_state": 7,
+        "secondary_special": 1
+      },
+      "primary_demand": {
+        "general": {
+          "renewal_plans": 7,
+          "binyanit": 7
+        },
+        "haredi_boys": {
+          "renewal_plans": 10,
+          "binyanit": 9
+        },
+        "haredi_girls": {
+          "renewal_plans": 7,
+          "binyanit": 7
+        },
+        "renewal_plans": 24,
+        "binyanit": 22,
+        "total": 46
+      },
+      "schools": [
+        {
+          "name": "הראל",
+          "home_classes": 18,
+          "occupancy": 2.5,
+          "special_ed": 3,
+          "new_wing_potential": 6
+        },
+        {
+          "name": "יד שבתאי",
+          "home_classes": 18,
+          "occupancy": 8,
+          "new_wing_potential": 6
+        },
+        {
+          "name": "שילה",
+          "home_classes": 18,
+          "occupancy": 17
+        },
+        {
+          "name": "שקמים",
+          "new_wing_potential": 6
+        }
+      ],
+      "renewal_projects": [
+        {
+          "name": "ציזלינג",
+          "added_units": 637
+        }
+      ],
+      "new_schools_proposed": [
+        {
+          "name": "ציזלינג",
+          "classes": 12
+        }
+      ],
+      "potential": {
+        "binyanit": 18,
+        "renewal": 12,
+        "total": 30
+      },
+      "community_sqm": {
+        "community_wing": 500,
+        "youth_club": 300,
+        "senior_club": 150,
+        "family_health": 150,
+        "clinic": 1000,
+        "synagogue": 900,
+        "_note": "מוקצה במשותף לרובעים ו', ח', ט'"
+      },
+      "carrying_capacity": {
+        "demand": 22,
+        "renewal_demand": 24,
+        "total_demand": 46,
+        "supply": 18,
+        "balance": -4,
+        "class": "partial",
+        "min_threshold": "ללא מגבלה",
+        "proposed_solution": "תוספת אגפים בבתי ספר קיימים"
+      },
+      "summary": "נדרשות 22 כיתות לבניינית. ניתן לבנות 18 כיתות אם כאגפים חדשים בבתי ספר קיימים.",
+      "data_flags": [
+        "תוספת יח\"ד בהתחדשות: 637 בסיכום, 757 בפיצול כללית/חרדית."
+      ],
+      "source_pages": [
+        4,
+        11,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "z",
+      "name": "רובע ז'",
+      "pop_general": 0,
+      "pop_haredi": 1.0,
+      "units_existing_for_renewal": 999,
+      "added_max_5y": 25,
+      "added_realistic": 37,
+      "added_population": 138,
+      "children": 5,
+      "classes": {
+        "primary_haredi_boys": 1,
+        "primary_haredi_girls": 1,
+        "secondary_haredi_boys": 1,
+        "secondary_haredi_girls": 1
+      },
+      "community_sqm": {
+        "mikveh": 65,
+        "_note": "שאר הצרכים במשותף עם רובע ג'"
+      },
+      "carrying_capacity": null,
+      "summary": "תוספת מתחת ל-50 יח\"ד. לא מוצג פתרון חינוך.",
+      "source_pages": [
+        4,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "ch",
+      "name": "רובע ח'",
+      "pop_general": 0.6,
+      "pop_haredi": 0.4,
+      "units_existing_for_renewal": 1453,
+      "added_max_5y": 332,
+      "added_realistic": 493,
+      "units": {
+        "existing": 4579,
+        "approved_renewal_plans": 0,
+        "added_by_renewal": 196,
+        "binyanit_phase_a": 332
+      },
+      "assumptions": {
+        "renewal_split": {
+          "general": 127,
+          "haredi": 69
+        },
+        "binyanit_split": {
+          "general": 216,
+          "haredi": 116
+        },
+        "general": {
+          "household": 3.3,
+          "cohort_pct": 2.0,
+          "cohort_size": 8.4
+        },
+        "haredi": {
+          "household": 5.5,
+          "cohort_pct": 3.3,
+          "cohort_size": 12.5
+        }
+      },
+      "added_population": 1388,
+      "children": 37,
+      "classes": {
+        "daycare": 3,
+        "kindergarten": 4,
+        "primary_haredi_boys": 5,
+        "primary_haredi_girls": 4,
+        "primary_state": 3,
+        "secondary_haredi_boys": 5,
+        "secondary_haredi_girls": 4,
+        "secondary_state": 3,
+        "secondary_special": 1
+      },
+      "primary_demand": {
+        "general": {
+          "renewal_plans": 2,
+          "binyanit": 3
+        },
+        "haredi_boys": {
+          "renewal_plans": 2,
+          "binyanit": 4
+        },
+        "haredi_girls": {
+          "renewal_plans": 2,
+          "binyanit": 3
+        },
+        "renewal_plans": 6,
+        "binyanit": 11,
+        "total": 17
+      },
+      "schools": [
+        {
+          "name": "צמח",
+          "home_classes": 12,
+          "occupancy": 12
+        },
+        {
+          "name": "נועם",
+          "home_classes": 12,
+          "occupancy": 11
+        }
+      ],
+      "potential": {
+        "binyanit": 0,
+        "renewal": 0,
+        "total": 0
+      },
+      "community_sqm": {
+        "_note": "מוקצה במשותף עם רובע ו'"
+      },
+      "carrying_capacity": {
+        "demand": 11,
+        "renewal_demand": 6,
+        "total_demand": 17,
+        "supply": 0,
+        "balance": -11,
+        "class": "none",
+        "min_threshold": 100,
+        "proposed_solution": "קיבולת של עד 100 יח\"ד. כל תוספת מעבר לכך מותנית בהוכחת מענים לפי סעיף השלביות בתכנית."
+      },
+      "summary": "אין מענה מספק. נקבעה קיבולת של עד 100 יח\"ד.",
+      "source_pages": [
+        4,
+        12,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "t",
+      "name": "רובע ט'",
+      "pop_general": 0.8,
+      "pop_haredi": 0.2,
+      "units_existing_for_renewal": 405,
+      "added_max_5y": 10,
+      "added_realistic": 15,
+      "added_population": 38,
+      "children": 1,
+      "classes": {},
+      "community_sqm": {
+        "_note": "מוקצה במשותף עם רובע ו'"
+      },
+      "carrying_capacity": null,
+      "summary": "תוספת מתחת ל-50 יח\"ד. לא מוצג פתרון חינוך.",
+      "source_pages": [
+        4,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "y",
+      "name": "רובע י'",
+      "pop_general": 1.0,
+      "pop_haredi": 0,
+      "group": "y-ya-yg",
+      "units_existing_for_renewal": 2150,
+      "added_max_5y": 54,
+      "added_realistic": 81,
+      "units": {
+        "existing": 2455,
+        "binyanit_phase_a": 54
+      },
+      "added_population": 180,
+      "children": 4,
+      "classes": {
+        "primary_state": 1,
+        "secondary_state": 1
+      },
+      "schools": [
+        {
+          "name": "אמירים",
+          "home_classes": 12,
+          "occupancy": 12,
+          "special_ed": 1
+        },
+        {
+          "name": "אריאל",
+          "home_classes": 12,
+          "occupancy": 12,
+          "special_ed": 1
+        }
+      ],
+      "carrying_capacity": {
+        "ref": "group:y-ya-yg"
+      },
+      "source_pages": [
+        4,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "ya",
+      "name": "רובע י\"א",
+      "pop_general": 1.0,
+      "pop_haredi": 0,
+      "group": "y-ya-yg",
+      "units_existing_for_renewal": 2903,
+      "added_max_5y": 235,
+      "added_realistic": 348,
+      "units": {
+        "existing": 5438,
+        "binyanit_phase_a": 235
+      },
+      "added_population": 776,
+      "children": 16,
+      "classes": {
+        "daycare": 1,
+        "kindergarten": 2,
+        "primary_state": 3,
+        "secondary_state": 3
+      },
+      "schools": [
+        {
+          "name": "חופית",
+          "home_classes": 18,
+          "occupancy": 14,
+          "special_ed": 2
+        },
+        {
+          "name": "נוף ים",
+          "home_classes": 18,
+          "occupancy": 12,
+          "special_ed": 4
+        },
+        {
+          "name": "צפרירים",
+          "home_classes": 18,
+          "occupancy": 14,
+          "special_ed": 1
+        },
+        {
+          "name": "הרואה",
+          "home_classes": 12,
+          "occupancy": 12,
+          "special_ed": 1
+        }
+      ],
+      "potential": {
+        "binyanit": 4,
+        "binyanit_note": "צפרירים, נופית, חוף ים"
+      },
+      "carrying_capacity": {
+        "ref": "group:y-ya-yg"
+      },
+      "source_pages": [
+        4,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "yg",
+      "name": "רובע י\"ג",
+      "pop_general": 1.0,
+      "pop_haredi": 0,
+      "group": "y-ya-yg",
+      "units_existing_for_renewal": 2622,
+      "added_max_5y": 66,
+      "added_realistic": 98,
+      "units": {
+        "existing": 3349,
+        "binyanit_phase_a": 66
+      },
+      "added_population": 218,
+      "children": 4,
+      "classes": {
+        "primary_state": 1,
+        "secondary_state": 1
+      },
+      "schools": [
+        {
+          "name": "שקד",
+          "home_classes": 18,
+          "occupancy": 17,
+          "special_ed": 2
+        }
+      ],
+      "potential": {
+        "binyanit": 1,
+        "binyanit_note": "שקד"
+      },
+      "carrying_capacity": {
+        "ref": "group:y-ya-yg"
+      },
+      "source_pages": [
+        4,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "tv",
+      "name": "רובע ט\"ו",
+      "pop_general": 1.0,
+      "pop_haredi": 0,
+      "units_existing_for_renewal": 85,
+      "added_max_5y": 2,
+      "added_realistic": 3,
+      "added_population": 7,
+      "children": 0,
+      "classes": {},
+      "carrying_capacity": null,
+      "summary": "תוספת מתחת ל-50 יח\"ד. לא מוצג פתרון חינוך.",
+      "source_pages": [
+        4,
+        14,
+        15
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "id": "y-ya-yg",
+      "name": "רובעים י' + י\"א + י\"ג",
+      "members": [
+        "y",
+        "ya",
+        "yg"
+      ],
+      "units": {
+        "approved_renewal_plans": 440,
+        "added_by_renewal": 0,
+        "binyanit_phase_a": 355
+      },
+      "assumptions": {
+        "added_units": 795,
+        "household": 3.3,
+        "cohort_pct": 2.0,
+        "cohort_size": 52.5
+      },
+      "primary_demand": {
+        "renewal_plans": 6,
+        "binyanit": 5,
+        "total": 12
+      },
+      "potential": {
+        "binyanit": 5,
+        "renewal": 0,
+        "total": 5
+      },
+      "community_sqm": {
+        "community_wing": 500,
+        "youth_club": 150,
+        "senior_club": 100,
+        "family_health": 150,
+        "clinic": 150,
+        "synagogue": 100
+      },
+      "carrying_capacity": {
+        "demand": 5,
+        "renewal_demand": 6,
+        "total_demand": 12,
+        "supply": 5,
+        "balance": 0,
+        "class": "positive",
+        "min_threshold": "ללא מגבלה",
+        "proposed_solution": null,
+        "added_units_in_table": 434
+      },
+      "summary": "נדרשות 5 כיתות לבניינית. 5 כיתות אם זמינות.",
+      "data_flags": [
+        "סה\"כ קיימות בעמוד: 5,804, אך סכום הרובעים 2,455+3,349+5,438 = 11,242.",
+        "תוספת יח\"ד: 355 בעמוד הרובעים (54+66+235), 434 בטבלת כושר הנשיאה."
+      ],
+      "source_pages": [
+        13,
+        16
+      ]
+    }
+  ],
+  "unused_classes_tashpag": {
+    "source": "עמוד 5, כיתות יסודי לא מנוצלות לפי מצבת תלמידים תשפ\"ג",
+    "rows": [
+      {
+        "rova": "א",
+        "classes": 14,
+        "schools": "גאולים, יהל\"ם"
+      },
+      {
+        "rova": "ב",
+        "classes": 9,
+        "schools": "אחדות"
+      },
+      {
+        "rova": "ג",
+        "classes": 20,
+        "schools": "קרוואנים במתחם המגינים"
+      },
+      {
+        "rova": "ד",
+        "classes": 4,
+        "schools": "רעים, שחר"
+      },
+      {
+        "rova": "ה",
+        "classes": 2,
+        "schools": "חזון יעקב"
+      },
+      {
+        "rova": "ו",
+        "classes": 18,
+        "schools": "הראל, יד שבתאי, שקמים"
+      },
+      {
+        "rova": "ט",
+        "classes": 13,
+        "schools": "אשכול, דביר"
+      },
+      {
+        "rova": "י\"א",
+        "classes": 4,
+        "schools": "צפרירים, חופית, נוף ים"
+      },
+      {
+        "rova": "י\"ב",
+        "classes": 10,
+        "schools": "אורות"
+      },
+      {
+        "rova": "י\"ג",
+        "classes": 1,
+        "schools": "שקד"
+      },
+      {
+        "rova": "ט\"ו",
+        "classes": 8,
+        "schools": "אופק, שחקים"
+      },
+      {
+        "rova": "ט\"ז",
+        "classes": 1,
+        "schools": "רימונים"
+      },
+      {
+        "rova": "י\"ז",
+        "classes": 6,
+        "schools": "שירת הים"
+      },
+      {
+        "rova": "סיטי",
+        "classes": 4,
+        "schools": "הקריה"
+      }
+    ]
+  },
+  "documents": [
+    {
+      "id": "program-appendix",
+      "title": "נספח פרוגרמה לצורכי ציבור וקיבולת (חתום לאישור)",
+      "date": "2025-06-30",
+      "file": "603-0972307_פרוגרמה_לשטחי_ציבור_חתום_לאישור.pdf",
+      "url": null,
+      "href": "/docs/program-appendix.pdf"
+    },
+    {
+      "id": "forum-deck",
+      "title": "מצגת לפורום תכנון, מהנדס העיר",
+      "date": "2025-07",
+      "file": "מצגת לפורום תכנון – מהנדס העיר יולי 2025.pdf",
+      "url": null
+    },
+    {
+      "id": "plan-mavat",
+      "title": "התכנית באתר מינהל התכנון (מבא\"ת)",
+      "url": "https://mavat.iplan.gov.il/SV4/1/6005137288/310",
+      "note": "קישור ישיר מאומת מול שירות Xplan של מינהל התכנון (pl_url)"
+    },
+    {
+      "id": "public-meeting",
+      "title": "מפגש שיתוף ציבור, בית יד לבנים",
+      "date": "2026-08-19",
+      "href": "/docs/public-meeting-2026-08-19.pdf",
+      "url": null
+    }
+  ]
+}
