@@ -1,11 +1,13 @@
 import {
   ASSUMED_FLOOR_HEIGHT_M,
+  ASSUMED_NEW_UNIT_AREA_M2,
   DEMOLISH_ADD_FLOORS,
   DEMOLISH_COVERAGE_PCT,
   DEMOLISH_EDUCATION_BONUS_FLOORS,
   DEMOLISH_M2_PER_UNIT,
   DEMOLISH_MAX_FLOORS,
   DISCLAIMER,
+  NEW_UNIT_AREA_RANGE,
   NON_RESIDENTIAL_FLOORS,
   PARTIAL_ROOF_FRACTION,
   PROTECTION_BASE_FULL_FLOORS,
@@ -28,6 +30,7 @@ import type {
   RouteId,
   RouteResult,
   SiteContext,
+  UnitEstimate,
 } from "./types";
 
 export const ROUTE_TITLES: Record<RouteId, string> = {
@@ -317,4 +320,34 @@ export function computePotential(b: BuildingInput, site: SiteContext): Potential
   );
 
   return { input: b, site, globalBlockers, routes, assumptions, disclaimer: DISCLAIMER };
+}
+
+/**
+ * Indicative number of new apartments a route yields, for comparing routes only.
+ * Existing apartments keep their area plus the route's m2 per unit; the rest of the realizable
+ * rights, less the public allocation, is divided by an assumed average new-apartment area.
+ */
+export function estimateNewUnits(
+  r: RouteResult,
+  b: BuildingInput,
+  avgNewUnitArea: number = ASSUMED_NEW_UNIT_AREA_M2,
+): UnitEstimate {
+  const avg = Math.min(NEW_UNIT_AREA_RANGE.max, Math.max(NEW_UNIT_AREA_RANGE.min, avgNewUnitArea || ASSUMED_NEW_UNIT_AREA_M2));
+  const units = b.residential ? b.existingUnits : 0;
+  const returned = b.typicalFloorArea * b.existingFloors + r.m2PerUnit * units;
+  const cap = r.maxFloors != null && r.footprintArea > 0 ? r.footprintArea * r.maxFloors : Infinity;
+  const realizable = Math.min(r.totalRights, cap);
+  const usable = b.residential && r.addsUnits && r.totalRights > 0;
+  const saleable = usable ? Math.max(0, realizable - returned - r.publicAllocation.area) : 0;
+  const newUnits = Math.floor(saleable / avg + 1e-9);
+  return {
+    route: r.route,
+    eligible: r.eligible,
+    returnedArea: r1(returned),
+    realizableRights: r1(usable ? realizable : 0),
+    saleableArea: r1(saleable),
+    newUnits,
+    perExistingUnit: units > 0 ? Math.round((newUnits / units) * 100) / 100 : 0,
+    residentsStay: r.route !== "demolish",
+  };
 }
