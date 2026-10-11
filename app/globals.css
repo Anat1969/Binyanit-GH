@@ -510,3 +510,8 @@ ol.numbered { margin: 0; padding-inline-start: 22px; font-size: 14px; display: f
   .prov-body { padding: 0 14px 16px; }
   .prov-count { display: none; }
 }
+/* Rules table on the plan page ------------------------------------------- */
+.table.rules { min-width: 640px; }
+.table.rules td, .table.rules th { vertical-align: top; }
+.table.rules tbody th { font-family: var(--sans); font-size: 14px; color: var(--ink-2); font-weight: 500; width: 140px; }
+.table.rules thead th { font-family: var(--sans); font-size: 14px; color: var(--ink); }

@@ -17,6 +17,7 @@ import { RouteCard } from "@/components/RouteCard";
 import { ReportSheet } from "@/components/ReportSheet";
 import { RichText, SummaryView } from "@/components/Summary";
 import { summaryBlocks } from "@/lib/summary";
+import { UnitsCompare } from "@/components/UnitsCompare";
 import { downloadPdf } from "@/lib/pdf";
 import { quarterAt, type QuarterFC } from "@/lib/quarter";
 import { EXTRACT_LABEL, extractFields, mergeExtracted, type ExtractKey, type Extracted } from "@/lib/extract";
@@ -713,6 +714,7 @@ export default function CheckClient() {
                 <RouteCard key={r.route} r={r} b={report.input} index={i} />
               ))}
             </div>
+            {report.globalBlockers.length === 0 && report.input.residential && <UnitsCompare rep={report} />}
             <div className="grid grid-2 aligned">
               <div className="card stack">
                 <div className="label">במילים</div>
