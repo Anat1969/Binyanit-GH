@@ -81,7 +81,12 @@ export function retrieveRows(rows: PlanTextRow[], query: string, k = 5): PlanTex
   const usable = rows.filter((r) => r.body.length > 20);
   if (!usable.length) return [];
   const index = buildIndex(usable, (r) => `${r.section ?? ""} ${r.title ?? ""} ${r.body}`);
-  return search(index, query, k).filter((h) => h.score > 1.5).map((h) => h.doc);
+  const q = [...new Set(tokenize(query))];
+  // With few rows IDF is flat, so also accept rows that share at least two distinct query terms.
+  return search(index, query, k * 3)
+    .filter((h) => h.score > 1.5 || q.filter((t) => index.items.find((it) => it.doc === h.doc)!.tf.has(t)).length >= 2)
+    .slice(0, k)
+    .map((h) => h.doc);
 }
 
 export const FAQ_MIN_SCORE = 3;

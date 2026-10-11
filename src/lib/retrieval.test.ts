@@ -73,3 +73,15 @@ describe("verbatim plan text retrieval", () => {
     expect(retrieveRows([row(3, "קצר")], "קצר")).toHaveLength(0);
   });
 });
+
+describe("verbatim retrieval with few rows", () => {
+  const row = (id: number, body: string) => ({ id, ord: id, kind: "para" as const, section: null, title: null, body, page: null, source: "מטרות התכנית" });
+  it("finds objectives when every row shares the vocabulary", () => {
+    const rows = [
+      row(1, "תכנית עירונית להתחדשות בניינים טעונים חיזוק ומיגון, אשדוד"),
+      row(2, "קביעת הוראות לחיזוק מבנים בפני רעידות אדמה ומיגונם, ומיגון מבנים קיימים תוך הוספת שימושים"),
+      row(3, "קביעת תחולת תכנית זו לגבי מבנים בעיר"),
+    ];
+    expect(retrieveRows(rows, "מה הוראות החיזוק בפני רעידות אדמה?").map((r) => r.id)).toContain(2);
+  });
+});

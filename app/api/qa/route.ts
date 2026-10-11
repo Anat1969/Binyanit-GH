@@ -77,16 +77,19 @@ export async function POST(req: Request) {
   // 3. Phrase an answer with a language model, and keep it only if it passes the grounding check.
   let answer: string | null = null;
   let provider: string | null = null;
+  let llmStatus: "off" | "ok" | "empty" | "ungrounded" | "error" = "off";
   if (llmProvider()) {
     const sources = citations.map((c) => `<section number="${c.section}" title="${c.title}">${c.text}</section>`).join("\n");
     try {
       const out = await complete(SYSTEM, `<sections>\n${sources}\n</sections>\n\nשאלה: ${question}`);
-      if (out && groundedAnswer(out.text, citations.map((c) => c.text).join(" "), question, citations.map((c) => c.section))) {
+      if (!out) llmStatus = "empty";
+      else if (groundedAnswer(out.text, citations.map((c) => c.text).join(" "), question, citations.map((c) => c.section))) {
         answer = out.text;
         provider = out.provider;
-      }
+        llmStatus = "ok";
+      } else llmStatus = "ungrounded";
     } catch {
-      answer = null;
+      llmStatus = "error";
     }
   }
   await log(question, citations.map((c) => c.section), false, answer ? "llm" : "retrieval");
@@ -96,6 +99,7 @@ export async function POST(req: Request) {
     citations,
     mode: answer ? "llm" : "retrieval",
     provider,
+    llm_status: llmStatus,
     corpus: CORPUS_STATUS,
   });
 }
