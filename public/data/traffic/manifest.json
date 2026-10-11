@@ -1,0 +1,43 @@
+{
+ "viewBox": [
+  0,
+  0,
+  3488,
+  2239
+ ],
+ "grayRef": [
+  121,
+  122,
+  124
+ ],
+ "counts": {
+  "active.fill": 5662,
+  "active.stroke": 226,
+  "renewal.fill": 0,
+  "renewal.stroke": 955,
+  "arterial.fill": 118,
+  "arterial.stroke": 1,
+  "mtan_existing.fill": 6,
+  "mtan_existing.stroke": 0,
+  "mtan_proposed.fill": 253,
+  "mtan_proposed.stroke": 673,
+  "local_existing.fill": 727,
+  "local_existing.stroke": 3,
+  "local_proposed.fill": 689,
+  "local_proposed.stroke": 1444,
+  "boundary.fill": 86,
+  "boundary.stroke": 0,
+  "cadastre.fill": 1293,
+  "cadastre.stroke": 34593,
+  "cadastre_light.fill": 0,
+  "cadastre_light.stroke": 76
+ },
+ "labels": 6763,
+ "blackStrokeWidths": {
+  "0": 6703,
+  "0.72": 24821,
+  "0.96": 2623,
+  "1.44": 445,
+  "0.5": 1
+ }
+}

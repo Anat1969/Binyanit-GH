@@ -12,7 +12,8 @@ export interface BuildingInput {
   existingUnits: number;
   typicalFloorArea: number; // m2, gross area of a typical floor
   groundFloor: GroundFloor; // built (>=50%) or pilotis
-  retrofitNeeded: boolean; // earthquake retrofit required
+  permitYear?: number | null; // year the building permit was issued; derives retrofitNeeded
+  retrofitNeeded?: boolean; // earthquake retrofit required; used only when permitYear is missing
   protectedSpaces: ProtectedSpaces;
   residential: boolean;
   plotArea: number; // m2
@@ -86,4 +87,16 @@ export interface PotentialReport {
   routes: RouteResult[];
   assumptions: string[];
   disclaimer: string;
+}
+
+/** Indicative count of new apartments per route. Derived from RouteResult, never from the plan text. */
+export interface UnitEstimate {
+  route: RouteId;
+  eligible: boolean;
+  returnedArea: number; // m2 kept by the existing apartments, including the per-unit addition
+  realizableRights: number; // m2 of rights that fit under the maximum floor count
+  saleableArea: number; // m2 left for new apartments after the public allocation
+  newUnits: number; // whole apartments, rounded down
+  perExistingUnit: number; // newUnits / existingUnits, 2 decimals
+  residentsStay: boolean; // false on demolish + rebuild: temporary relocation
 }

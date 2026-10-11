@@ -7,6 +7,7 @@ import {
   computePotential,
   computeProtection,
   computeRetrofit,
+  estimateNewUnits,
   floorBand,
   isSmallBuilding,
   publicAllocation,
@@ -183,6 +184,21 @@ describe("Retrofit + protection (4.1.2)", () => {
     expect(r.eligible).toBe(false);
   });
 
+  it("retrofit status is derived from the permit year, not chosen", () => {
+    const old = computePotential(building({ retrofitNeeded: undefined, permitYear: 1972 }), site());
+    expect(old.routes[1].eligible).toBe(true);
+    expect(old.input.retrofitNeeded).toBe(true);
+    const newer = computePotential(building({ retrofitNeeded: true, permitYear: 1985 }), site());
+    expect(newer.routes[1].eligible).toBe(false);
+    expect(newer.routes[1].blockers[0].text).toContain("1985");
+    expect(computePotential(building({ permitYear: 1980 }), site()).routes[1].eligible).toBe(false);
+  });
+
+  it("requires a permit year or an explicit retrofit status", () => {
+    expect(validateInput(building({ retrofitNeeded: undefined }))).toContain("יש להזין את שנת היתר הבנייה");
+    expect(validateInput(building({ permitYear: 85 })).length).toBe(1);
+  });
+
   it("non-residential: +2 floors, no per-unit addition", () => {
     const r = computeRetrofit(building({ residential: false, existingUnits: 0 }), site());
     expect(r.addedFullFloors).toBe(2);
@@ -340,5 +356,65 @@ describe("Input validation", () => {
   });
   it("accepts a valid building", () => {
     expect(validateInput(building())).toHaveLength(0);
+  });
+});
+
+describe("new apartments per existing apartment (indicative)", () => {
+  // 4 floors x 400 m2, 16 units -> 4 per floor, city-wide street
+  it("protection: 1.7 expanded floors of 452 m2 -> 8 new units", () => {
+    const b = building();
+    const e = estimateNewUnits(computeProtection(b, site()), b, 95);
+    expect(e.returnedArea).toBe(1808);
+    expect(e.saleableArea).toBe(768.4);
+    expect(e.newUnits).toBe(8);
+    expect(e.perExistingUnit).toBe(0.5);
+    expect(e.residentsStay).toBe(true);
+  });
+
+  it("retrofit: 2.7 expanded floors of 500 m2 -> 14 new units", () => {
+    const b = building();
+    const e = estimateNewUnits(computeRetrofit(b, site()), b, 95);
+    expect(e.saleableArea).toBe(1350);
+    expect(e.newUnits).toBe(14);
+    expect(e.perExistingUnit).toBe(0.88);
+  });
+
+  it("demolish: rights less returned apartments (existing + 35 m2 each)", () => {
+    const b = building();
+    const e = estimateNewUnits(computeDemolish(b, site()), b, 95);
+    expect(e.returnedArea).toBe(2160);
+    expect(e.realizableRights).toBe(5400);
+    expect(e.saleableArea).toBe(3240);
+    expect(e.newUnits).toBe(34);
+    expect(e.perExistingUnit).toBe(2.13);
+    expect(e.residentsStay).toBe(false);
+  });
+
+  it("demolish: rights above the maximum floor count are not counted", () => {
+    const b = building({ plotArea: 500 }); // footprint 300 -> 18 floors needed, max 13
+    const e = estimateNewUnits(computeDemolish(b, site()), b, 95);
+    expect(e.realizableRights).toBe(3900);
+    expect(e.newUnits).toBe(18);
+  });
+
+  it("public allocation is deducted", () => {
+    const b = building();
+    const r = computeDemolish(b, site({ publicAllocationZone: true }));
+    expect(r.publicAllocation.area).toBe(162);
+    expect(estimateNewUnits(r, b, 95).newUnits).toBe(32);
+  });
+
+  it("small building and non-residential: no new units", () => {
+    const small = building({ existingFloors: 2, existingUnits: 4, typicalFloorArea: 150 });
+    expect(estimateNewUnits(computeRetrofit(small, site()), small).newUnits).toBe(0);
+    const office = building({ residential: false, existingUnits: 0 });
+    expect(estimateNewUnits(computeRetrofit(office, site()), office).newUnits).toBe(0);
+  });
+
+  it("average apartment area is clamped to a sane range", () => {
+    const b = building();
+    const r = computeRetrofit(b, site());
+    expect(estimateNewUnits(r, b, 10).newUnits).toBe(Math.floor(1350 / 40));
+    expect(estimateNewUnits(r, b, 0).newUnits).toBe(14);
   });
 });
