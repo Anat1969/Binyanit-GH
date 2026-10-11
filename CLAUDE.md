@@ -28,11 +28,26 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 - `app/api/*` – geocode (Nominatim), lookup (PostGIS RPC), layers, qa, explain, checks, quarters, status.
 - `scripts/import-kml.mjs` – המרת KML/GeoJSON מהתשריט ל-SQL עבור `binyanit_layers`.
 
+## בדיקת כתובת (/check)
+- מפת רקע: OpenFreeMap positron (חינמי, בלי מפתח), נפילה לאריחי OSM. תצלום אוויר: Esri World Imagery. CARTO דורש עכשיו מפתח, לא להשתמש.
+- רובע תמיד משויך: מהתשריט, אחרת מ-OSM (suburb בתוצאת Nominatim), אחרת פוליגון ב-rovaim.geojson או הקרוב ביותר (src/lib/quarter.ts). אין "רובע לא ידוע".
+- טעון חיזוק אינו בחירה: נגזר משנת ההיתר (לפני 1.1.1980, כמו תמ"א 38, לאימות מול ההגדרות). RETROFIT_PERMIT_BEFORE_YEAR ב-config.
+- מילוי אוטומטי: PDF נקרא בדפדפן (pdfjs-dist, worker ב-public/pdf.worker.min.mjs, גרסה נעוצה), חילוץ דטרמיניסטי ב-src/lib/extract.ts עם ציטוט. מסמך סרוק: הזנה ידנית.
+- 3 דוגמאות מסומנות כדוגמה במסך וב-PDF.
+- PDF: שבירת עמודים רק בין בלוקים (h3/p/tr/li/.pdf-block), שוליים 10 מ"מ. רשימות עם סמן כתוב, לא list-style (html2canvas שובר אותו ב-RTL).
+## עמוד הוראות התכנית (/provisions, כפתור "תכנית")
+- שבעה פרקים לפי מבנה הוראות תכנית במבא"ת. אקורדיון: פרק אחד וסעיף אחד פתוחים בכל רגע.
+- מקור: `src/content/plan-provisions.ts`. פרק 1 מ-plan-meta (Xplan). סעיפים מילה במילה מ-binyanit_plan_text לפי מספר סעיף; כשאין נוסח מאושר בפרק מוצג נוסח העבודה מ-plan-sections.ts עם תווית "נוסח עבודה".
+- "התכנית" בתפריט שונה ל"התכנית בקצרה" כדי להבדיל מ"תכנית".
+
 ## עמוד צורכי ציבור (/program, /program/[id])
 - מקור אמת: `src/data/program.json` (נספח הפרוגרמה, 30.6.2025). כל מספר במסך ממופה לשדה; אין חישובים מלבד חיפוש ערכי קבוצה (י'+י"א+י"ג). אפיון: `docs/PROGRAM_SPEC.md`.
 - PDF: `public/docs/program-appendix.pdf`, קישורי מקור `#page=N` (עמ' 3 מתודולוגיה, 4 קיבולת, 5 כיתות לא מנוצלות, 6-13 רובעים, 14 חינוך, 15 קהילה, 16 כושר נשיאה).
 - פוליגונים: `public/data/rovaim.geojson`, משוערים (approximate:true): וורונוי מנקודות רובע ב-OSM, חתוך לגבול התכנית הרשמי. מע"ר צפון: נקודה משוערת. להחליף בשכבת GIS עירונית.
-- מפת רקע OpenFreeMap (positron), עם נפילה לרקע ריק אם לא נטענה. פיצ' 55, fill-extrusion לפי added_max_5y × 0.5 מ'.
+- מפת רקע OpenFreeMap (positron), עם נפילה לרקע ריק אם לא נטענה. תוסף RTL מקומי (public/vendor/mapbox-gl-rtl-text.js), בלעדיו התוויות בעברית הפוכות.
+- תלת מימד רק במצב "תוספת יח"ד": נפח אפור (5 גוונים) לפי added_max_5y × 0.5 מ', עולה מגבול רובע מקווקו. שאר המצבים שטוחים (פיצ' 0). גירעון אינו גובה: מוצג בצבע ובתווית מתחת לשם. קו אדום מקווקו = "ללא כושר נשיאה" לפי מקרא עמ' 16.
+- שמות הרובעים: סמני HTML במרכז הפוליגון (עובדים גם בלי רקע). מקרא על המפה במסך רחב, מתחתיה בנייד.
+- צבע שמור לרמזור (כושר נשיאה) ולמפת חום (חרדים). כל השאר בגווני אפור מול שחור ולבן. טבלאות הנושאים בלשוניות, כפתורי הרובעים מעל המפה.
 - "שנת הקמה": ב-JSON יש מקרא בלבד, בלי שיוך לרובע, ולכן מוצג מצב "אין נתון".
 - טבלאות: TanStack, מיון בכל עמודה (לחיצה ראשונה תמיד עולה), ריקים בסוף. מצב כהה: טוקנים ב-:root עם prefers-color-scheme.
 
@@ -50,6 +65,7 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 
 ## פריסה
 - Vercel: פרויקט binyanit-ashdod (prj_LQx5xXAWXKLTDlzCD1JHMqbdFl0S), אזור icn1 (ליד Supabase בסיאול). כתובת: https://binyanit-ashdod.vercel.app
+- מלכודת: כמה סשנים עובדים במקביל על ענפים שונים, וכל פריסה לייצור מחליפה את הקודמת. לפני create_deployment: list_deployments לפרויקט, ואם הפריסה האחרונה מענף אחר, למזג את הענף שלה (git merge, לא rebase) ורק אז לפרוס. אחרת עבודה של סשן אחר נעלמת מהאתר.
 - קישור Git לפרויקט נכשל ב-500 מה-API, ולכן אין פריסה אוטומטית בדחיפה. פריסה: create_deployment עם gitSource {org: Anat1969, repo: Binyanit-GH, ref: הענף}.
 - אימות חי: Vercel sandbox עם curl (הסביבה בענן לא מגיעה ל-vercel.app).
 
