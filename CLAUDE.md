@@ -7,8 +7,10 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 - לכל אפליקציה: אייקון אפליקציה מעוצב (app/icon.svg, app/apple-icon.png, public/icon-192.png, public/icon-512.png, app/manifest.ts). האייקון כאן: חתך בניין, קומות קיימות באפור, קומות נוספות בלבן וקומת גג חלקית. ה"ללא אייקונים" חל על הממשק, לא על אייקון האפליקציה.
 - בלי תלות במפתח API בתשלום. תוכן הסבר ותשובות נכתב מראש (src/content/plan-story.ts, src/content/faq.ts) עם הפניה לסעיפים, כמו באתר "מה נבנה סביבי". ANTHROPIC_API_KEY הוא תוספת אופציונלית בלבד.
 - AI לניסוח תשובות: ענת ביקשה במפורש API חינמי. סדר: ANTHROPIC_API_KEY, אחר כך GEMINI_API_KEY (חינמי עם מפתח), אחרת Pollinations בלי מפתח (private). כל תשובה עוברת groundedAnswer: כל מספר חייב להופיע בקטעים, וחייבת הפניה לסעיף. אחרת מוצגים הקטעים עצמם. FREE_LLM_DISABLED=1 מכבה.
-- עריכה באתר: קוד עריכה (hash בטבלה binyanit_admin_secret, הקוד עצמו לא בריפו). העלאות ל-Vercel Blob (store binyanit-docs). מחיקה רכה בלבד.
-- שכבות התשריט: ייבוא ממינהל התכנון (Xplan, ags.iplan.gov.il) דרך כפתור בדף המסמכים או POST /api/admin/import-xplan. "הנחיות מיוחדות" בתשריט אינן מבחינות בין הקצאה לציבור להנחיות ב׳, ולכן בתוך הפוליגון הבחירה ידנית. "גבול מגבלות בניה" משמש כרדיוס מגן קידוח (הסקה, לאמת).
+- דף המסמכים פתוח לעריכה לכולם, בלי קוד (החלטה של ענת, 11.10.2026: "פשוט תאפשר לעלות עוד מסמכים"). הוספה (כמה קבצים יחד), שינוי שם, סיווג ותיאור, והסרה רכה. API: /api/docs (POST/DELETE) ו-/api/docs/upload (Vercel Blob, store binyanit-docs, עד 100MB). פונקציות: binyanit_doc_save, binyanit_doc_archive (security definer, anon). מחיקה רכה בלבד (archived).
+- מסמכי התכנית הרשמיים יושבים ב-public/docs בשמות אנגליים; השם בעברית נשמר בטבלה binyanit_plan_documents.
+- קוד עריכה (hash ב-binyanit_admin_secret) נשאר רק לייבוא שכבות ולטעינת נוסח ההוראות (/api/admin/*).
+- שכבות התשריט: ייבוא ממינהל התכנון (Xplan, ags.iplan.gov.il) דרך POST /api/admin/import-xplan (עם קוד). "הנחיות מיוחדות" בתשריט אינן מבחינות בין הקצאה לציבור להנחיות ב׳, ולכן בתוך הפוליגון הבחירה ידנית. "גבול מגבלות בניה" משמש כרדיוס מגן קידוח (הסקה, לאמת).
 - הוראות התכנית מילה במילה: טבלה binyanit_plan_text, נטענת ב-POST /api/admin/plan-text אחרי המרת ה-PDF ובדיקה ידנית. מוצגת עם חיפוש בדף השאלות.
 - מבא"ת חוסם גישה אוטומטית למסמכים. לא לעקוף; המסמכים מגיעים מהעלאה של ענת.
 

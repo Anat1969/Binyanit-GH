@@ -1,6 +1,5 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
-import { isAdmin } from "@/lib/admin";
 
 const ALLOWED = [
   "application/pdf",
@@ -13,26 +12,25 @@ const ALLOWED = [
   "application/vnd.google-earth.kml+xml",
   "application/vnd.google-earth.kmz",
   "application/zip",
+  "application/x-zip-compressed",
   "application/octet-stream",
 ];
 
-// Browser uploads straight to Vercel Blob; this route only issues a token after checking the admin code.
+// Browser uploads straight to Vercel Blob (store binyanit-docs); this route only issues a short-lived token.
 export async function POST(req: Request) {
   const body = (await req.json()) as HandleUploadBody;
   try {
     const json = await handleUpload({
       body,
       request: req,
-      onBeforeGenerateToken: async (_pathname, clientPayload) => {
-        const { code } = JSON.parse(clientPayload ?? "{}");
-        if (!(await isAdmin(code))) throw new Error("unauthorized");
-        return { allowedContentTypes: ALLOWED, maximumSizeInBytes: 200 * 1024 * 1024, addRandomSuffix: true };
+      onBeforeGenerateToken: async (pathname) => {
+        if (!pathname.startsWith("docs/")) throw new Error("bad path");
+        return { allowedContentTypes: ALLOWED, maximumSizeInBytes: 100 * 1024 * 1024, addRandomSuffix: true };
       },
       onUploadCompleted: async () => undefined,
     });
     return NextResponse.json(json);
-  } catch (e) {
-    const unauthorized = e instanceof Error && e.message === "unauthorized";
-    return NextResponse.json({ error: unauthorized ? "קוד עריכה שגוי" : "ההעלאה נכשלה" }, { status: unauthorized ? 401 : 400 });
+  } catch {
+    return NextResponse.json({ error: "ההעלאה נכשלה" }, { status: 400 });
   }
 }

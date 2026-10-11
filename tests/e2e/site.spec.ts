@@ -287,58 +287,43 @@ test("app icon and manifest are served", async ({ page }) => {
   expect(m.icons).toHaveLength(3);
 });
 
-test("documents admin: wrong code, login, upload form, edit, hide, archive, import layers", async ({ page }) => {
+test("documents: open editing without a code, rename, reclassify, remove, add several files", async ({ page }) => {
   await mockBase(page);
-  const docs = [{ id: "d1", title: "הוראות התכנית", category: "binding", description: null, file_url: "https://x.public.blob.vercel-storage.com/a.pdf", source_url: null, sort: 1, published: true, archived: false }];
   const calls: { method: string; body?: unknown; url: string }[] = [];
-  await page.route("**/api/admin/check", (r) => {
-    const ok = r.request().postDataJSON().code === "ABCD-EFGH-JKLM-NPQR";
-    return r.fulfill(json(ok ? { ok: true } : { error: "קוד עריכה שגוי" }, ok ? 200 : 401));
-  });
-  await page.route("**/api/admin/docs**", (r) => {
+  await page.route("**/api/docs**", (r) => {
     const req = r.request();
     calls.push({ method: req.method(), body: req.method() === "POST" ? req.postDataJSON() : undefined, url: req.url() });
-    expect(req.headers()["x-admin-code"]).toBe("ABCD-EFGH-JKLM-NPQR");
-    return r.fulfill(json(req.method() === "GET" ? docs : { ok: true, id: "d1" }));
+    return r.fulfill(json({ ok: true, id: "00000000-0000-0000-0000-000000000001" }));
   });
-  await page.route("**/api/admin/import-xplan", (r) => r.fulfill(json({ counts: { plan_boundary: 1, street_class: 60, well_site: 17 } })));
 
   await page.goto("/documents");
-  await page.getByRole("button", { name: "כניסת עורכת" }).click();
-  const codeBox = page.locator('input[name="admin-code"]');
-  await codeBox.fill("wrong-code-1");
-  await page.getByRole("button", { name: "כניסה" }).click();
-  await expect(page.getByText("הקוד שגוי")).toBeVisible();
-  await codeBox.fill("abcd-efgh-jklm-npqr");
-  await page.getByRole("button", { name: "כניסה" }).click();
-  await expect(page.getByTestId("admin-panel")).toBeVisible();
-  await expect(page.getByTestId("admin-doc")).toHaveCount(1);
-
-  // upload without file -> validation
-  await page.getByTestId("upload-form").getByRole("button", { name: "העלאה" }).click();
-  await expect(page.getByText("יש לבחור קובץ")).toBeVisible();
-
-  // rename + save
-  const row = page.getByTestId("admin-doc").first();
-  await row.getByLabel("שם המסמך").fill("הוראות התכנית המאושרות");
-  await row.getByRole("button", { name: "שמירה" }).click();
+  await expect(page.getByText("קוד עריכה")).toHaveCount(0);
+  const card = page.locator("article.doc").first();
+  await card.getByRole("button", { name: "עריכה" }).click();
+  const ed = card.getByTestId("doc-editor");
+  await ed.getByLabel("שם המסמך").fill("הוראות התכנית המאושרות");
+  await ed.getByLabel("סיווג").selectOption("binding");
+  await ed.getByRole("button", { name: "שמירה" }).click();
   await expect.poll(() => calls.filter((c) => c.method === "POST").length).toBe(1);
-  expect((calls.find((c) => c.method === "POST")!.body as { title: string }).title).toBe("הוראות התכנית המאושרות");
+  const body = calls.find((c) => c.method === "POST")!.body as { title: string; category: string };
+  expect(body.title).toBe("הוראות התכנית המאושרות");
+  expect(body.category).toBe("binding");
 
-  await row.getByRole("button", { name: "הסתרה מהציבור" }).click();
-  await expect.poll(() => calls.filter((c) => c.method === "POST").length).toBe(2);
-  expect((calls.filter((c) => c.method === "POST")[1].body as { published: boolean }).published).toBe(false);
-
+  await card.getByRole("button", { name: "עריכה" }).click();
   page.once("dialog", (d) => d.accept());
-  await row.getByRole("button", { name: "הסרה" }).click();
+  await card.getByRole("button", { name: "הסרת המסמך" }).click();
   await expect.poll(() => calls.filter((c) => c.method === "DELETE").length).toBe(1);
-  expect(calls.find((c) => c.method === "DELETE")!.url).toContain("id=d1");
 
-  await page.getByRole("button", { name: "ייבוא שכבות ממינהל התכנון" }).click();
-  await expect(page.getByTestId("import-result")).toContainText("גבול התכנית: 1");
-
-  await page.getByRole("button", { name: "יציאה" }).click();
-  await expect(page.getByTestId("admin-panel")).toHaveCount(0);
+  const up = page.getByTestId("upload-form");
+  await up.locator('input[type="file"]').setInputFiles([
+    { name: "תשריט_גיליון_1.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4") },
+    { name: "נספח.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4") },
+  ]);
+  await expect(page.getByTestId("pending-doc")).toHaveCount(2);
+  await expect(page.getByTestId("pending-doc").first().getByLabel("שם המסמך באתר")).toHaveValue("תשריט גיליון 1");
+  await expect(up.getByRole("button", { name: "העלאת 2 המסמכים" })).toBeVisible();
+  await page.getByTestId("pending-doc").first().getByRole("button", { name: "ביטול" }).click();
+  await expect(up.getByRole("button", { name: "העלאת המסמך" })).toBeVisible();
   await noHorizontalScroll(page);
 });
 
