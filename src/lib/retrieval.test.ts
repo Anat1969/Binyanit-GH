@@ -48,6 +48,8 @@ describe("pre-written answers", () => {
   it("no confident answer for unrelated questions", () => {
     expect(matchFaq("מזג אוויר בפריז")).toBeNull();
     expect(matchFaq("מה שעות הפתיחה של הבנק")).toBeNull();
+    // shares only the generic word "תכנית" with the exclusions answer
+    expect(matchFaq("מה מטרות התכנית לחיזוק מבנים בפני רעידות אדמה?")).toBeNull();
   });
 
   it("every answer cites at least one section and links to existing sections", () => {

@@ -89,7 +89,7 @@ export function retrieveRows(rows: PlanTextRow[], query: string, k = 5): PlanTex
     .map((h) => h.doc);
 }
 
-export const FAQ_MIN_SCORE = 3;
+export const FAQ_MIN_SCORE = 6.5;
 
 /** Best pre-written answer for a question, or null when no answer is a confident match. */
 export function matchFaq(query: string): { item: FaqItem; score: number } | null {
