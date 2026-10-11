@@ -379,3 +379,6 @@ h1, h2, h3 { margin: 0; font-weight: 300; letter-spacing: -0.01em; }
   .tmap-stage { height: min(62vh, calc(64vw + 170px)); min-height: 340px; }
   .tmap-legend { border-inline-start: 0; border-top: 1px solid var(--line); }
 }
+.tmap-status { display: inline-block; margin-inline-start: 8px; padding: 0 8px; border-radius: 999px; font-size: 11px; line-height: 18px; border: 1px solid var(--line-strong); color: var(--ink-2); background: var(--surface); vertical-align: 1px; }
+.tmap-status[data-status="מוצע"] { border-color: var(--info-line); background: var(--accent-soft); }
+.tmap-status[data-status="לבירור"] { border-color: var(--warn-line); background: var(--warn-soft); color: var(--warn-ink); }

@@ -299,6 +299,7 @@ export default function TrafficMap() {
                   <SwatchIcon l={l} />
                   <span className="tmap-name">
                     {l.name}
+                    {l.status && <span className="tmap-status" data-status={l.status}>{l.status}</span>}
                     {(l.sub || l.sheet) && (
                       <small>
                         {[l.sub, l.sheet && `בגיליון: ${l.sheet}`].filter(Boolean).join(" · ")}

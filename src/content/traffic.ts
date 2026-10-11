@@ -14,6 +14,9 @@ export const TRAFFIC_DOC = {
   metersPerUnit: (0.0254 / 72) * 5000,
   // The sheet is not drawn north-up; angle of the north arrow on the sheet, degrees clockwise.
   northRotation: 56.5,
+  // Approval stamp of the Southern District Committee on the sheet. Its decision-date field shows
+  // 01/01/1901, a default value, so the stamp is not treated as a decision date.
+  stamp: "חותמת הוועדה המחוזית דרום, חתומה 26.8.2026",
 };
 
 export type TrafficLayerId =
@@ -31,6 +34,8 @@ export type TrafficLayerId =
   | "lbl_block"
   | "lbl_parcel";
 
+export type LayerStatus = "קיים" | "מוצע" | "מנחה" | "לבירור";
+
 export type Swatch = "solid" | "dash" | "hatch" | "zig" | "block" | "thin" | "text";
 
 export interface TrafficLayer {
@@ -43,6 +48,7 @@ export interface TrafficLayer {
   stroke: string | null;
   swatch: Swatch;
   sample?: string;
+  status?: LayerStatus;
   defaultOn: boolean;
 }
 
@@ -56,14 +62,14 @@ export const TRAFFIC_GROUPS: { id: TrafficGroupId; title: string; note?: string 
 ];
 
 export const TRAFFIC_LAYERS: TrafficLayer[] = [
-  { id: "active", group: "rights", name: "רחוב עם חזית פעילה", sheet: "רחוב פעיל", sub: "עירוב שימושים", fill: "#8a00b8", stroke: "#8a00b8", swatch: "dash", defaultOn: true },
-  { id: "mtan_existing", group: "rights", name: "ציר הסעת המונים קיים", sheet: 'ציר מתע"ן', sub: "לפי התכנית הכוללנית", fill: "#00b8b8", stroke: null, swatch: "solid", defaultOn: true },
-  { id: "mtan_proposed", group: "rights", name: "ציר הסעת המונים מוצע", sheet: 'ציר מתע"ן', sub: "לפי התכנית הכוללנית", fill: "#00a8a8", stroke: "#00a8a8", swatch: "zig", defaultOn: true },
-  { id: "arterial", group: "network", name: "דרך עורקית או רחוב מאסף", sub: "כולל כיכרות", fill: "#e60000", stroke: null, swatch: "solid", defaultOn: true },
-  { id: "local_existing", group: "network", name: "רחוב מקומי קיים", fill: "#17b817", stroke: "#17b817", swatch: "solid", defaultOn: true },
-  { id: "local_proposed", group: "network", name: "רחוב מקומי מוצע", sub: "קישוריות חדשה", fill: "#e000e0", stroke: "#e000e0", swatch: "zig", defaultOn: true },
-  { id: "renewal", group: "areas", name: "אזור לאיתור מתחמי התחדשות עירונית", fill: null, stroke: "#f08000", swatch: "hatch", defaultOn: true },
-  { id: "excluded", group: "areas", name: "שטח מסומן באפור", sub: "אין לו פריט במקרא הגיליון", fill: "#7a7b7d", stroke: null, swatch: "block", defaultOn: true },
+  { id: "active", status: "מוצע", group: "rights", name: "רחוב עם חזית פעילה", sheet: "רחוב פעיל", sub: "עירוב שימושים", fill: "#8a00b8", stroke: "#8a00b8", swatch: "dash", defaultOn: true },
+  { id: "mtan_existing", status: "קיים", group: "rights", name: "ציר הסעת המונים קיים", sheet: 'ציר מתע"ן', sub: "לפי התכנית הכוללנית", fill: "#00b8b8", stroke: null, swatch: "solid", defaultOn: true },
+  { id: "mtan_proposed", status: "מוצע", group: "rights", name: "ציר הסעת המונים מוצע", sheet: 'ציר מתע"ן', sub: "לפי התכנית הכוללנית", fill: "#00a8a8", stroke: "#00a8a8", swatch: "zig", defaultOn: true },
+  { id: "arterial", status: "קיים", group: "network", name: "דרך עורקית או רחוב מאסף", sub: "כולל כיכרות", fill: "#e60000", stroke: null, swatch: "solid", defaultOn: true },
+  { id: "local_existing", status: "קיים", group: "network", name: "רחוב מקומי קיים", fill: "#17b817", stroke: "#17b817", swatch: "solid", defaultOn: true },
+  { id: "local_proposed", status: "מוצע", group: "network", name: "רחוב מקומי מוצע", sub: "קישוריות חדשה", fill: "#e000e0", stroke: "#e000e0", swatch: "zig", defaultOn: true },
+  { id: "renewal", status: "מנחה", group: "areas", name: "אזור לאיתור מתחמי התחדשות עירונית", fill: null, stroke: "#f08000", swatch: "hatch", defaultOn: true },
+  { id: "excluded", status: "לבירור", group: "areas", name: "שטח מסומן באפור", sub: "אין לו פריט במקרא הגיליון", fill: "#7a7b7d", stroke: null, swatch: "block", defaultOn: true },
   { id: "boundary", group: "base", name: "גבול התכנית", fill: "#006edd", stroke: null, swatch: "solid", defaultOn: true },
   { id: "cadastre", group: "base", name: "חלקות, מגרשים ומבנים", sub: "רקע קדסטרי", fill: "#2a302d", stroke: "#2a302d", swatch: "thin", defaultOn: true },
   { id: "cadastre_light", group: "base", name: "קווי רקע משניים", fill: null, stroke: "#9aa49e", swatch: "thin", defaultOn: true },
@@ -95,7 +101,7 @@ export const TRAFFIC_COPY = {
     },
     {
       title: "מה עוד מסומן",
-      text: "קו כתום מקווקו תוחם אזורים לאיתור מתחמים להתחדשות עירונית. ייתכן שאלה האזורים שבתשריט מסומנים כהנחיות מיוחדות ב׳ (הערכה, לא אומתה). שטחים מסומנים באפור בגיליון בלי פריט במקרא, ולכן משמעותם לא מוצגת כאן.",
+      text: "קו כתום מקווקו תוחם אזורים לאיתור מתחמים להתחדשות עירונית. ייתכן שאלה האזורים שבתשריט מסומנים כהנחיות מיוחדות ב׳ (הערכה, לא אומתה). שטחים מסומנים באפור בגיליון בלי פריט במקרא, ולכן משמעותם לא מוצגת כאן עד בירור מול עורך הנספח.",
       sources: "מקרא הגיליון",
     },
   ],
@@ -103,5 +109,9 @@ export const TRAFFIC_COPY = {
     "המפה מוצגת בקואורדינטות הגיליון ואינה מקושרת לרשת ישראל החדשה. אי אפשר לאתר בה כתובת, ואין להסתמך עליה למדידה.",
     "השכבות חולצו אוטומטית מקובץ ה-PDF הווקטורי לפי צבעי המקרא. ייתכנו קטעים חסרים או שגויים.",
     "בדרך כלל נספח תנועה הוא מסמך מנחה. סיווג הרחוב לצורך הזכויות נקבע בתשריט ובהוראות, ומעמד הנספח בתכנית הזו לא אומת באתר.",
+    "בגיליון חותמת אישור של הוועדה המחוזית, אבל שדה תאריך ההחלטה בה לא מולא. לא אומת שזו הגרסה הסופית שפורסמה.",
+    "שמות הרחובות שבגיליון אינם ניתנים לחילוץ, כי הגופן העברי בקובץ ממופה שגוי. לכן אין חיפוש לפי שם רחוב.",
+    'ציר הסעת המונים קיים ומוצע מצוירים באותו צבע. ההפרדה ביניהם נעשתה לפי צורת השרטוט (רצועה רציפה מול ריבועים וזיגזג), וטעונה אימות מול הגיליון.',
   ],
+  next: "בשלב הבא המפה תקושר לרשת ישראל החדשה לפי מספרי הגושים שבגיליון. אז בדיקת הכתובת תוכל לזהות לבד אם הבניין פונה לרחוב עם חזית פעילה או לציר הסעת המונים.",
 };

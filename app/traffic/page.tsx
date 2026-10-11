@@ -20,6 +20,7 @@ export default function Page() {
           <span>תאריך: <span className="num">{TRAFFIC_DOC.date}</span></span>
           <span>קנ&quot;מ <span className="num">{TRAFFIC_DOC.scale}</span></span>
           <span className="chip">{TRAFFIC_DOC.status}</span>
+          <span>{TRAFFIC_DOC.stamp}</span>
         </div>
       </header>
 
@@ -51,6 +52,7 @@ export default function Page() {
             <Link href="/check" className="btn small">לבדיקת כתובת</Link>
             <Link href="/qa" className="btn small ghost">שאלות על התכנית</Link>
           </div>
+          <p style={{ margin: 0 }} className="muted">{TRAFFIC_COPY.next}</p>
           <span className="cite">מקור: {TRAFFIC_DOC.file}</span>
         </div>
       </section>
