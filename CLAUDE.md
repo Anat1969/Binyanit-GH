@@ -63,6 +63,7 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 
 ## פריסה
 - Vercel: פרויקט binyanit-ashdod (prj_LQx5xXAWXKLTDlzCD1JHMqbdFl0S), אזור icn1 (ליד Supabase בסיאול). כתובת: https://binyanit-ashdod.vercel.app
+- מלכודת: כמה סשנים עובדים במקביל על ענפים שונים, וכל פריסה לייצור מחליפה את הקודמת. לפני create_deployment: list_deployments לפרויקט, ואם הפריסה האחרונה מענף אחר, למזג את הענף שלה (git merge, לא rebase) ורק אז לפרוס. אחרת עבודה של סשן אחר נעלמת מהאתר.
 - קישור Git לפרויקט נכשל ב-500 מה-API, ולכן אין פריסה אוטומטית בדחיפה. פריסה: create_deployment עם gitSource {org: Anat1969, repo: Binyanit-GH, ref: הענף}.
 - אימות חי: Vercel sandbox עם curl (הסביבה בענן לא מגיעה ל-vercel.app).
 
