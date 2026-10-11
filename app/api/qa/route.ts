@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { CORPUS_STATUS } from "@/content/plan-sections";
 import { complete, llmAvailable } from "@/lib/llm";
-import { asksForComputation, retrieve } from "@/lib/retrieval";
+import { asksForComputation, matchFaq, retrieve, sectionsById } from "@/lib/retrieval";
 import { supabase } from "@/lib/supabase";
 
 const SYSTEM = `אתה עוזר מידע לתכנית התחדשות בניינית 603-0972307 באשדוד.
@@ -13,7 +13,7 @@ const SYSTEM = `אתה עוזר מידע לתכנית התחדשות בניינ�
 5. עברית תקינה, קצרה וענינית, ללא כותרות וללא אייקונים. עד 6 משפטים.
 6. סיים במשפט: "המידע אינו מקנה זכויות וכפוף לשיקול דעת הוועדה המקומית (7.2.1, 6.1.3)."`;
 
-async function log(question: string, cited: string[], refused: boolean, mode: "llm" | "retrieval") {
+async function log(question: string, cited: string[], refused: boolean, mode: "llm" | "retrieval" | "faq") {
   try {
     await supabase().from("binyanit_qa_logs").insert({ question: question.slice(0, 1000), cited_sections: cited, refused, mode });
   } catch {
@@ -43,11 +43,27 @@ export async function POST(req: Request) {
     });
   }
 
+  // 1. Pre-written answer (no AI, no key). Used unless an LLM key is configured.
+  const faq = mode === "retrieval" ? matchFaq(question) : null;
+  if (faq) {
+    const secs = sectionsById(faq.item.sections);
+    await log(question, secs.map((x) => x.section), false, "faq");
+    return NextResponse.json({
+      kind: "answer",
+      answer: faq.item.a,
+      matched: faq.item.q,
+      citations: secs.map((x) => ({ section: x.section, title: x.title, text: x.text })),
+      mode: "faq",
+      corpus: CORPUS_STATUS,
+    });
+  }
+
+  // 2. Relevant plan sections, phrased by an LLM only when a key is configured.
   const hits = retrieve(question, 4);
   const citations = hits.map((h) => ({ section: h.section.section, title: h.section.title, text: h.section.text }));
   if (!hits.length) {
     await log(question, [], false, mode);
-    return NextResponse.json({ kind: "not_found", answer: "לא נמצא מענה בהוראות התכנית שנטענו למערכת.", citations: [], mode, corpus: CORPUS_STATUS });
+    return NextResponse.json({ kind: "not_found", answer: "לא נמצא מענה בהוראות התכנית שנטענו למערכת. השאלה נרשמה ותשמש להרחבת מאגר התשובות.", citations: [], mode, corpus: CORPUS_STATUS });
   }
 
   let answer: string | null = null;

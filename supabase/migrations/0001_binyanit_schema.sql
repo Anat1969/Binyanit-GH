@@ -59,7 +59,7 @@ create table if not exists public.binyanit_qa_logs (
   question text not null check (char_length(question) <= 1000),
   cited_sections text[] not null default '{}',
   refused boolean not null default false,
-  mode text not null check (mode in ('llm', 'retrieval'))
+  mode text not null check (mode in ('llm', 'retrieval', 'faq'))
 );
 alter table public.binyanit_qa_logs enable row level security;
 drop policy if exists "binyanit qa anon insert" on public.binyanit_qa_logs;

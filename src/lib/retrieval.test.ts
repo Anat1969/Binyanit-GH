@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { asksForComputation, normalize, retrieve } from "./retrieval";
+import { FAQ } from "@/content/faq";
+import { asksForComputation, matchFaq, normalize, retrieve, sectionsById } from "./retrieval";
 
 describe("retrieval", () => {
   it("strips Hebrew prefixes and final letters", () => {
@@ -29,4 +30,30 @@ describe("computation refusal", () => {
   it.each(["מה התנאים למסלול חיזוק ומיגון?", "מתי יש פטור מהקצאה לצרכי ציבור?"])("answers: %s", (q) =>
     expect(asksForComputation(q)).toBe(false),
   );
+});
+
+describe("pre-written answers", () => {
+  it.each([
+    ["מתי יש פטור מהקצאה לצרכי ציבור?", "public"],
+    ["מה ההבדל בין המסלולים?", "routes"],
+    ["מה זו קומת גג חלקית", "partial-roof"],
+    ["האם הזכויות מובטחות לי?", "vested"],
+    ["כמה זמן התכנית בתוקף", "validity"],
+    ["מה קורה עם בקשת תמ\"א 38 שהגשנו?", "tama38"],
+    ["איזה תמהיל דירות צריך", "unit-mix"],
+    ["מה מקבלים על גן ילדים בפרויקט", "education"],
+    ["מה התכסית בהריסה ובנייה", "coverage"],
+  ])("%s -> %s", (q, id) => expect(matchFaq(q)?.item.id).toBe(id));
+
+  it("no confident answer for unrelated questions", () => {
+    expect(matchFaq("מזג אוויר בפריז")).toBeNull();
+    expect(matchFaq("מה שעות הפתיחה של הבנק")).toBeNull();
+  });
+
+  it("every answer cites at least one section and links to existing sections", () => {
+    for (const f of FAQ) {
+      expect(f.a).toMatch(/\(|סעיף|טבלה/);
+      expect(sectionsById(f.sections)).toHaveLength(f.sections.length);
+    }
+  });
 });

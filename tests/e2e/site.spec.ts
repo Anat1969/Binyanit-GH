@@ -48,15 +48,16 @@ test("home: facts, CTAs and navigation", async ({ page }) => {
   await expect(page).toHaveURL(/\/qa$/);
 
   for (const [name, path] of [
+    ["התכנית", "/plan/603-0972307"],
     ["מסמכים", "/documents"],
     ["מכסות ברובעים", "/quarters"],
     ["שאלות על התכנית", "/qa"],
     ["בדיקת כתובת", "/check"],
     ["ראשי", "/"],
   ] as const) {
-    await page.getByRole("navigation", { name: "ניווט ראשי" }).getByRole("link", { name }).click();
+    await page.getByRole("navigation", { name: "ניווט ראשי" }).getByRole("link", { name, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`${path === "/" ? "/$" : path + "$"}`));
-    await expect(page.getByRole("navigation", { name: "ניווט ראשי" }).getByRole("link", { name })).toHaveAttribute("aria-current", "page");
+    await expect(page.getByRole("navigation", { name: "ניווט ראשי" }).getByRole("link", { name, exact: true })).toHaveAttribute("aria-current", "page");
   }
 });
 
@@ -252,4 +253,36 @@ test("documents and quarters render a clear state", async ({ page }) => {
   await expect(page.locator("h1")).toContainText("יחידות דיור ברובעים");
   await expect(page.locator(".state, .card").first()).toBeVisible();
   await noHorizontalScroll(page);
+});
+
+test("plan story page: chapters, facts, sources and CTA", async ({ page }) => {
+  await mockBase(page);
+  await page.goto("/plan");
+  await expect(page).toHaveURL(/\/plan\/603-0972307$/);
+  await expect(page.locator("h1")).toContainText("התחדשות בניין אחר בניין");
+  await expect(page.locator(".chapter")).toHaveCount(7);
+  await expect(page.locator(".fact").first()).toBeVisible();
+  await expect(page.getByText("לפי דיווח").first()).toBeVisible();
+  await page.getByRole("navigation", { name: "פרקים" }).getByRole("link", { name: "הרחוב קובע" }).click();
+  await expect(page).toHaveURL(/#street$/);
+  await expect(page.locator("#street")).toBeInViewport();
+  await page.getByRole("navigation", { name: "פרקים" }).getByRole("link", { name: "בדיקת כתובת" }).click();
+  await expect(page).toHaveURL(/\/check$/);
+  await page.goto("/plan/603-0972307");
+  await noHorizontalScroll(page);
+  expect((await page.request.get("/plan/123")).status()).toBe(404);
+});
+
+test("app icon and manifest are served", async ({ page }) => {
+  await page.goto("/");
+  const icons = await page.locator('link[rel="icon"], link[rel="apple-touch-icon"], link[rel="manifest"]').evaluateAll((els) => els.map((e) => e.getAttribute("href")));
+  expect(icons.some((h) => h?.includes("icon"))).toBe(true);
+  expect(icons.some((h) => h?.includes("apple-icon"))).toBe(true);
+  expect(icons.some((h) => h?.includes("manifest"))).toBe(true);
+  for (const path of ["/icon.svg", "/icon-192.png", "/icon-512.png", "/manifest.webmanifest"]) {
+    expect((await page.request.get(path)).status(), path).toBe(200);
+  }
+  const m = await (await page.request.get("/manifest.webmanifest")).json();
+  expect(m.dir).toBe("rtl");
+  expect(m.icons).toHaveLength(3);
 });

@@ -36,6 +36,7 @@ export default function Home() {
               </p>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 20 }}>
                 <Link href="/check" className="btn">בדיקת כתובת</Link>
+                <Link href={`/plan/${PLAN.number}`} className="btn ghost">התכנית במילים פשוטות</Link>
                 <Link href="/qa" className="btn ghost">שאלה על התכנית</Link>
               </div>
             </div>
@@ -100,8 +101,8 @@ export default function Home() {
             <div className="label">חשוב לדעת</div>
             <p className="disclaimer" style={{ margin: 0 }}>{DISCLAIMER}</p>
             <p className="muted" style={{ margin: 0 }}>
-              המספרים מחושבים במנוע כללים קבוע ובדוק. הבינה המלאכותית באתר רק מסבירה את התוצאה ועונה על שאלות מתוך
-              הוראות התכנית, ואינה מחשבת זכויות.
+              המספרים מחושבים במנוע כללים קבוע ובדוק. ההסברים והתשובות באתר נכתבו מראש מתוך הוראות התכנית, עם הפניה
+              לסעיפים, ואינם מחשבים זכויות לבניין מסוים.
             </p>
           </div>
         </div>

@@ -2,11 +2,12 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
+import { FAQ } from "@/content/faq";
 
 type Citation = { section: string; title: string; text: string };
-type Turn = { q: string; state: "loading" | "done" | "error"; kind?: "answer" | "refused" | "not_found"; answer?: string; citations?: Citation[]; mode?: string; corpus?: string };
+type Turn = { matched?: string; q: string; state: "loading" | "done" | "error"; kind?: "answer" | "refused" | "not_found"; answer?: string; citations?: Citation[]; mode?: string; corpus?: string };
 
-const EXAMPLES = ["מתי יש פטור מהקצאה לצרכי ציבור?", "מה התנאים לקומה נוספת במסלול חיזוק ומיגון?", "מה תמהיל הדירות הנדרש בהריסה ובנייה?"];
+const EXAMPLES = FAQ.map((f) => f.q);
 
 export default function QaClient() {
   const [q, setQ] = useState("");
@@ -34,14 +35,14 @@ export default function QaClient() {
       <div className="label">שאלות על התכנית</div>
       <h1 className="h2">שאלה על הוראות התכנית</h1>
       <p className="lead" style={{ margin: 0 }}>
-        התשובות מבוססות על הוראות התכנית בלבד, עם הפניה לסעיפים. לחישוב זכויות לבניין מסוים יש להשתמש ב
+        התשובות נכתבו מראש מתוך הוראות התכנית, עם הפניה לסעיפים. כשאין תשובה מוכנה מוצגים הסעיפים הרלוונטיים. לחישוב זכויות לבניין מסוים יש להשתמש ב
         <Link href="/check">בדיקת הכתובת</Link>.
       </p>
 
       <div className="chat" aria-live="polite" style={{ marginTop: 16 }}>
         {turns.length === 0 && (
           <div className="card stack" data-testid="qa-empty">
-            <div className="label">דוגמאות</div>
+            <div className="label">שאלות נפוצות</div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               {EXAMPLES.map((e) => (
                 <button key={e} type="button" className="btn ghost small" onClick={() => ask(e)}>{e}</button>
@@ -63,6 +64,9 @@ export default function QaClient() {
                   </div>
                 )}
                 {t.kind === "not_found" && <div className="state info"><b>לא נמצא מענה</b>{t.answer}</div>}
+                {t.kind === "answer" && t.mode === "faq" && t.matched && (
+                  <div className="label" style={{ textTransform: "none" }}>תשובה מוכנה לשאלה: {t.matched}</div>
+                )}
                 {t.kind === "answer" && <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>{t.answer}</p>}
                 {t.citations && t.citations.length > 0 && (
                   <div className="stack">

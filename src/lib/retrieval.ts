@@ -1,3 +1,4 @@
+import { FAQ, type FaqItem } from "@/content/faq";
 import { PLAN_SECTIONS, type PlanSection } from "@/content/plan-sections";
 
 const PREFIXES = ["וה", "שה", "וב", "ול", "ומ", "כש", "מה", "בה", "לה", "ה", "ו", "ב", "ל", "מ", "ש", "כ"];
@@ -21,15 +22,15 @@ export function tokenize(text: string): string[] {
     .filter((t) => t.length > 1);
 }
 
-interface Indexed {
-  doc: PlanSection;
+interface Indexed<T> {
+  doc: T;
   tf: Map<string, number>;
   len: number;
 }
 
-function buildIndex(docs: PlanSection[]) {
-  const items: Indexed[] = docs.map((doc) => {
-    const toks = tokenize(`${doc.title} ${doc.title} ${doc.text} ${doc.section}`);
+function buildIndex<T>(docs: T[], text: (d: T) => string) {
+  const items: Indexed<T>[] = docs.map((doc) => {
+    const toks = tokenize(text(doc));
     const tf = new Map<string, number>();
     toks.forEach((t) => tf.set(t, (tf.get(t) ?? 0) + 1));
     return { doc, tf, len: toks.length };
@@ -40,16 +41,9 @@ function buildIndex(docs: PlanSection[]) {
   return { items, df, avg, n: items.length };
 }
 
-const INDEX = buildIndex(PLAN_SECTIONS);
-
-export interface Hit {
-  section: PlanSection;
-  score: number;
-}
-
-export function retrieve(query: string, k = 4): Hit[] {
+function search<T>(index: ReturnType<typeof buildIndex<T>>, query: string, k: number) {
   const q = [...new Set(tokenize(query))];
-  const { items, df, avg, n } = INDEX;
+  const { items, df, avg, n } = index;
   const k1 = 1.4;
   const b = 0.75;
   return items
@@ -61,11 +55,36 @@ export function retrieve(query: string, k = 4): Hit[] {
         const idf = Math.log(1 + (n - (df.get(t) ?? 0) + 0.5) / ((df.get(t) ?? 0) + 0.5));
         score += (idf * (f * (k1 + 1))) / (f + k1 * (1 - b + (b * it.len) / avg));
       }
-      return { section: it.doc, score };
+      return { doc: it.doc, score };
     })
     .filter((h) => h.score > 0)
     .sort((a, b2) => b2.score - a.score)
     .slice(0, k);
+}
+
+const SECTION_INDEX = buildIndex(PLAN_SECTIONS, (d) => `${d.title} ${d.title} ${d.text} ${d.section}`);
+// Questions and their phrasings weigh three times the answer text.
+const FAQ_INDEX = buildIndex(FAQ, (d) => `${d.q} ${d.q} ${d.q} ${d.alt.join(" ")} ${d.alt.join(" ")} ${d.alt.join(" ")} ${d.a}`);
+
+export interface Hit {
+  section: PlanSection;
+  score: number;
+}
+
+export function retrieve(query: string, k = 4): Hit[] {
+  return search(SECTION_INDEX, query, k).map((h) => ({ section: h.doc, score: h.score }));
+}
+
+export const FAQ_MIN_SCORE = 3;
+
+/** Best pre-written answer for a question, or null when no answer is a confident match. */
+export function matchFaq(query: string): { item: FaqItem; score: number } | null {
+  const [best] = search(FAQ_INDEX, query, 1);
+  return best && best.score >= FAQ_MIN_SCORE ? { item: best.doc, score: best.score } : null;
+}
+
+export function sectionsById(ids: string[]): PlanSection[] {
+  return ids.map((id) => PLAN_SECTIONS.find((s) => s.id === id)).filter((s): s is PlanSection => Boolean(s));
 }
 
 /** Questions asking the agent to compute rights for a specific building are refused and redirected to the engine. */
