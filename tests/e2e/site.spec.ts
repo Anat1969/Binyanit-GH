@@ -48,7 +48,8 @@ test("home: facts, CTAs and navigation", async ({ page }) => {
   await expect(page).toHaveURL(/\/qa$/);
 
   for (const [name, path] of [
-    ["התכנית", "/plan/603-0972307"],
+    ["התכנית בקצרה", "/plan/603-0972307"],
+    ["תכנית", "/provisions"],
     ["מסמכים", "/documents"],
     ["מכסות ברובעים", "/quarters"],
     ["שאלות על התכנית", "/qa"],
@@ -253,6 +254,36 @@ test("documents and quarters render a clear state", async ({ page }) => {
   await expect(page.locator("h1")).toContainText("יחידות דיור ברובעים");
   await expect(page.locator(".state, .card").first()).toBeVisible();
   await noHorizontalScroll(page);
+});
+
+test("provisions: seven chapters, one open chapter and one open section at a time", async ({ page }) => {
+  await mockBase(page);
+  await page.goto("/provisions");
+  await expect(page.locator("h1")).toContainText("תכנית עירונית להתחדשות בניינים טעונים חיזוק ומיגון");
+  await expect(page.getByRole("link", { name: "תכנון זמין" })).toHaveAttribute("href", /mavat\.iplan\.gov\.il/);
+  const list = page.getByRole("list", { name: "פרקי ההוראות" });
+  const chapters = list.locator(".prov-btn");
+  await expect(chapters).toHaveCount(7);
+  await chapters.nth(3).click();
+  await expect(chapters.nth(3)).toHaveAttribute("aria-expanded", "true");
+  const secs = page.locator("#ch-4 .prov-sbtn");
+  await secs.first().click();
+  await expect(page.locator("#ch-4 .prov-detail")).toHaveCount(1);
+  await expect(page.locator("#ch-4 .prov-detail .chip")).toBeVisible();
+  await secs.nth(1).click();
+  await expect(page.locator("#ch-4 .prov-detail")).toHaveCount(1);
+  await expect(secs.first()).toHaveAttribute("aria-expanded", "false");
+  await chapters.nth(6).click();
+  await expect(chapters.nth(3)).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("#ch-4")).toHaveCount(0);
+  await expect(page.locator("#ch-7 .prov-sbtn")).toHaveCount(3);
+  await chapters.nth(2).click();
+  await expect(page.locator("#ch-3")).toContainText("אין עדיין נוסח");
+  await chapters.nth(2).click();
+  await expect(chapters.nth(2)).toHaveAttribute("aria-expanded", "false");
+  await noHorizontalScroll(page);
+  await page.locator("main").getByRole("link", { name: "חיפוש בנוסח המלא" }).click();
+  await expect(page).toHaveURL(/\/qa$/);
 });
 
 test("plan story page: chapters, facts, sources and CTA", async ({ page }) => {

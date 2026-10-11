@@ -26,6 +26,11 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 - `app/api/*` – geocode (Nominatim), lookup (PostGIS RPC), layers, qa, explain, checks, quarters, status.
 - `scripts/import-kml.mjs` – המרת KML/GeoJSON מהתשריט ל-SQL עבור `binyanit_layers`.
 
+## עמוד הוראות התכנית (/provisions, כפתור "תכנית")
+- שבעה פרקים לפי מבנה הוראות תכנית במבא"ת. אקורדיון: פרק אחד וסעיף אחד פתוחים בכל רגע.
+- מקור: `src/content/plan-provisions.ts`. פרק 1 מ-plan-meta (Xplan). סעיפים מילה במילה מ-binyanit_plan_text לפי מספר סעיף; כשאין נוסח מאושר בפרק מוצג נוסח העבודה מ-plan-sections.ts עם תווית "נוסח עבודה".
+- "התכנית" בתפריט שונה ל"התכנית בקצרה" כדי להבדיל מ"תכנית".
+
 ## עמוד צורכי ציבור (/program, /program/[id])
 - מקור אמת: `src/data/program.json` (נספח הפרוגרמה, 30.6.2025). כל מספר במסך ממופה לשדה; אין חישובים מלבד חיפוש ערכי קבוצה (י'+י"א+י"ג). אפיון: `docs/PROGRAM_SPEC.md`.
 - PDF: `public/docs/program-appendix.pdf`, קישורי מקור `#page=N` (עמ' 3 מתודולוגיה, 4 קיבולת, 5 כיתות לא מנוצלות, 6-13 רובעים, 14 חינוך, 15 קהילה, 16 כושר נשיאה).
