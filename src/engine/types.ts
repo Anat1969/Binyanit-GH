@@ -12,7 +12,8 @@ export interface BuildingInput {
   existingUnits: number;
   typicalFloorArea: number; // m2, gross area of a typical floor
   groundFloor: GroundFloor; // built (>=50%) or pilotis
-  retrofitNeeded: boolean; // earthquake retrofit required
+  permitYear?: number | null; // year the building permit was issued; derives retrofitNeeded
+  retrofitNeeded?: boolean; // earthquake retrofit required; used only when permitYear is missing
   protectedSpaces: ProtectedSpaces;
   residential: boolean;
   plotArea: number; // m2

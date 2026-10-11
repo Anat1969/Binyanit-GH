@@ -14,13 +14,16 @@ const LOOKUP_IN = {
 };
 
 async function mockBase(page: Page, opts: { llm?: boolean } = {}) {
-  await page.route("**/basemaps.cartocdn.com/**", (r) => r.abort());
+  await page.route("**/tiles.openfreemap.org/**", (r) => r.abort());
+  await page.route("**/tile.openstreetmap.org/**", (r) => r.abort());
+  await page.route("**/server.arcgisonline.com/**", (r) => r.abort());
   await page.route("**/api/status", (r) => r.fulfill(json({ llm: Boolean(opts.llm) })));
   await page.route("**/api/quarters", (r) => r.fulfill(json([{ quarter: "ח", threshold: 100, units_used: 100 }])));
   await page.route("**/api/layers/**", (r) => r.fulfill(json({ type: "FeatureCollection", features: [] })));
 }
 
 async function fillBuilding(page: Page) {
+  await page.locator('input[name="permitYear"]').fill("1972");
   await page.locator('input[name="existingFloors"]').fill("4");
   await page.locator('input[name="existingUnits"]').fill("16");
   await page.locator('input[name="typicalFloorArea"]').fill("400");
@@ -48,7 +51,8 @@ test("home: facts, CTAs and navigation", async ({ page }) => {
   await expect(page).toHaveURL(/\/qa$/);
 
   for (const [name, path] of [
-    ["התכנית", "/plan/603-0972307"],
+    ["התכנית בקצרה", "/plan/603-0972307"],
+    ["תכנית", "/provisions"],
     ["מסמכים", "/documents"],
     ["מכסות ברובעים", "/quarters"],
     ["שאלות על התכנית", "/qa"],
@@ -95,7 +99,6 @@ test("check: full flow – geocode, lookup, compute, explain, PDF, anonymous log
   // toggle every segmented control once and back
   for (const [group, a, b] of [
     ["קומת קרקע", "בנויה (50% ומעלה)", "קומת עמודים"],
-    ["טעון חיזוק לרעידות אדמה", "לא", "כן"],
     ["מרחבים מוגנים", "חלקי (עד 50%)", "אין"],
     ["שימוש", "אחר", "מגורים"],
   ] as const) {
@@ -104,6 +107,9 @@ test("check: full flow – geocode, lookup, compute, explain, PDF, anonymous log
     await expect(g.getByRole("button", { name: a })).toHaveAttribute("aria-pressed", "true");
     await g.getByRole("button", { name: b }).click();
   }
+  // retrofit status is derived from the permit year, not a choice
+  await expect(page.getByRole("group", { name: "טעון חיזוק לרעידות אדמה" })).toHaveCount(0);
+  await expect(page.getByTestId("retrofit-derived")).toContainText("כן. היתר לפני 1.1.1980");
   await page.getByText("פרטי פרויקט וחריגים").click();
   await page.getByLabel("הפרויקט כולל שימושים פעילים בקומת הקרקע").check();
 
@@ -142,6 +148,59 @@ test("check: full flow – geocode, lookup, compute, explain, PDF, anonymous log
   expect(file.suggestedFilename()).toMatch(/^potential-603-0972307-\d+\.pdf$/);
 
   await noHorizontalScroll(page);
+});
+
+test("check: three labelled examples, one per route", async ({ page }) => {
+  await mockBase(page);
+  await page.route("**/api/checks", (r) => r.fulfill(json({ ok: true })));
+  await page.goto("/check");
+  const site = page.getByTestId("site-panel");
+  await expect(site).toContainText("המסגרת מתמלאת");
+
+  await page.getByRole("button", { name: "דוגמה 1: מיגון בלבד" }).click();
+  await expect(page.getByTestId("example-banner")).toContainText("להמחשה בלבד");
+  await expect(page.getByTestId("results")).toBeVisible();
+  await expect(page.getByTestId("route-protection")).toContainText("זכאי לבחינה");
+  await expect(page.getByTestId("route-retrofit")).toContainText("1986");
+  await expect(page.getByTestId("route-retrofit")).toContainText("לא זמין");
+  await expect(site.getByLabel("רובע")).toHaveValue("ט");
+
+  await page.getByRole("button", { name: "דוגמה 2: חיזוק ומיגון" }).click();
+  await expect(page.getByTestId("route-retrofit")).toContainText("זכאי לבחינה");
+  await expect(page.getByTestId("retrofit-derived")).toContainText("כן");
+
+  await page.getByRole("button", { name: "דוגמה 3: הריסה ובנייה מחדש" }).click();
+  await expect(page.getByTestId("route-demolish")).toContainText("זכאי לבחינה");
+  const sum = page.getByTestId("summary").first();
+  await expect(sum.locator("h4")).toHaveCount(3);
+  await expect(sum.locator("b").first()).toBeVisible();
+
+  // editing a field leaves example mode
+  await page.locator('input[name="plotArea"]').fill("1400");
+  await expect(page.getByTestId("example-banner")).toHaveCount(0);
+  await noHorizontalScroll(page);
+});
+
+test("check: quarter is always assigned from the address", async ({ page }) => {
+  await mockBase(page);
+  await page.route("**/api/geocode**", (r) => r.fulfill(json({ results: [{ label: "הרצל 5, רובע ט', אשדוד", lat: 31.785, lon: 34.64, quarter: "ט" }] })));
+  await page.route("**/api/lookup**", (r) => r.fulfill(json({ ...LOOKUP_IN, loaded: ["plan_boundary"], quarter: null, quarter_quota: null })));
+  await page.goto("/check");
+  await page.getByLabel("כתובת").fill("הרצל 5");
+  await page.getByRole("button", { name: "איתור" }).click();
+  const panel = page.getByTestId("site-panel");
+  await expect(panel.getByLabel("רובע")).toHaveValue("ט");
+  await expect(panel).toContainText("לפי הכתובת");
+  await expect(panel.locator("option", { hasText: "לא ידוע" })).toHaveCount(0);
+});
+
+test("check: document upload reads PDFs in the browser", async ({ page }) => {
+  await mockBase(page);
+  await page.goto("/check");
+  const { jsPDF } = await import("jspdf");
+  const blank = Buffer.from(new jsPDF().output("arraybuffer"));
+  await page.getByTestId("upload").locator('input[type="file"]').setInputFiles({ name: "scan.pdf", mimeType: "application/pdf", buffer: blank });
+  await expect(page.getByTestId("doc-results")).toContainText("מסמך סרוק");
 });
 
 test("check: out-of-plan state disables compute", async ({ page }) => {
@@ -253,6 +312,36 @@ test("documents and quarters render a clear state", async ({ page }) => {
   await expect(page.locator("h1")).toContainText("יחידות דיור ברובעים");
   await expect(page.locator(".state, .card").first()).toBeVisible();
   await noHorizontalScroll(page);
+});
+
+test("provisions: seven chapters, one open chapter and one open section at a time", async ({ page }) => {
+  await mockBase(page);
+  await page.goto("/provisions");
+  await expect(page.locator("h1")).toContainText("תכנית עירונית להתחדשות בניינים טעונים חיזוק ומיגון");
+  await expect(page.getByRole("link", { name: "תכנון זמין" })).toHaveAttribute("href", /mavat\.iplan\.gov\.il/);
+  const list = page.getByRole("list", { name: "פרקי ההוראות" });
+  const chapters = list.locator(".prov-btn");
+  await expect(chapters).toHaveCount(7);
+  await chapters.nth(3).click();
+  await expect(chapters.nth(3)).toHaveAttribute("aria-expanded", "true");
+  const secs = page.locator("#ch-4 .prov-sbtn");
+  await secs.first().click();
+  await expect(page.locator("#ch-4 .prov-detail")).toHaveCount(1);
+  await expect(page.locator("#ch-4 .prov-detail .chip")).toBeVisible();
+  await secs.nth(1).click();
+  await expect(page.locator("#ch-4 .prov-detail")).toHaveCount(1);
+  await expect(secs.first()).toHaveAttribute("aria-expanded", "false");
+  await chapters.nth(6).click();
+  await expect(chapters.nth(3)).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("#ch-4")).toHaveCount(0);
+  await expect(page.locator("#ch-7 .prov-sbtn")).toHaveCount(3);
+  await chapters.nth(2).click();
+  await expect(page.locator("#ch-3")).toContainText("אין עדיין נוסח");
+  await chapters.nth(2).click();
+  await expect(chapters.nth(2)).toHaveAttribute("aria-expanded", "false");
+  await noHorizontalScroll(page);
+  await page.locator("main").getByRole("link", { name: "חיפוש בנוסח המלא" }).click();
+  await expect(page).toHaveURL(/\/qa$/);
 });
 
 test("plan story page: chapters, facts, sources and CTA", async ({ page }) => {

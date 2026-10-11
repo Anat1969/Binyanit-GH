@@ -19,7 +19,7 @@ import {
   type School,
 } from "@/program/data";
 import { ASSUMPTION_LABEL, CLASS_KEYS, CLASS_LABEL, COMMUNITY_KEYS, COMMUNITY_LABEL, POP_LABEL, UNITS_LABEL } from "@/program/labels";
-import { ApproxBanner, RovaButtons, SourceLink, StatusBadge } from "@/program/ui";
+import { ApproxBanner, MapLegend, RovaButtons, SourceLink, StatusBadge, Tabs, type TabDef } from "@/program/ui";
 
 const ProgramMap = dynamic(() => import("@/program/ProgramMap"), { ssr: false, loading: () => <div className="pmap skeleton" style={{ height: 340 }} /> });
 
@@ -48,7 +48,7 @@ function CapacityCard({ cap, via, page }: { cap: Capacity; via: Group | null; pa
   return (
     <div className="card raised stack" data-testid="capacity-card">
       <div className="row-between">
-        <h2 className="h3">כושר נשיאה, כיתות יסודי</h2>
+        <h2 className="h3 sec-title">כושר נשיאה, כיתות יסודי</h2>
         {via && <span className="chip">מחושב לקבוצת {via.name}</span>}
       </div>
       <div className="cap-grid">
@@ -160,7 +160,7 @@ function CommunityTable({ c, testId }: { c: Record<string, number | string> | un
 function Section({ title, page, children, id }: { title: string; page?: number | null; children: React.ReactNode; id: string }) {
   return (
     <section className="card stack" aria-labelledby={id}>
-      <h2 id={id} className="h3">{title}</h2>
+      <h2 id={id} className="h3 sec-title">{title}</h2>
       {children}
       {page ? <SourceLink page={page} /> : null}
     </section>
@@ -169,12 +169,12 @@ function Section({ title, page, children, id }: { title: string; page?: number |
 
 function GroupBlock({ g }: { g: Group }) {
   return (
-    <section className="stack group-block" aria-labelledby="grp-title" data-testid="group-block">
+    <section className="stack" aria-labelledby="grp-title" data-testid="group-block">
       <div className="label">קבוצת רובעים</div>
       <h2 id="grp-title" className="h2">{g.name}</h2>
       <p className="lead" style={{ margin: 0 }}>{g.summary}</p>
       <Flags flags={g.data_flags} />
-      <div className="grid grid-2">
+      <div className="grid grid-2 eq">
         <Section title="יחידות דיור (קבוצה)" page={13} id="g-units">
           <DataTable data={kv(g.units, UNITS_LABEL)} columns={kvCols} caption="יחידות דיור בקבוצה" testId="group-units" />
         </Section>
@@ -197,6 +197,7 @@ function GroupBlock({ g }: { g: Group }) {
 
 export default function RovaClient({ id }: { id: string }) {
   const [approx, setApprox] = useState(true);
+  const [tab, setTab] = useState("overview");
   const i = rovaIndex(id);
   const r = PROGRAM.rovaim[i];
   const prev = PROGRAM.rovaim[(i - 1 + PROGRAM.rovaim.length) % PROGRAM.rovaim.length];
@@ -206,6 +207,14 @@ export default function RovaClient({ id }: { id: string }) {
   const slide = rovaSlidePage(r);
   const low = r.added_max_5y < LOW_ADDITION_THRESHOLD;
   const summary = r.summary ?? g?.summary ?? null;
+
+  const hasEducation = Boolean(r.assumptions || r.primary_demand || r.schools || r.renewal_projects || r.new_schools_proposed);
+  const tabs: TabDef[] = [
+    { id: "overview", label: "נתוני בסיס וכיתות" },
+    ...(hasEducation ? [{ id: "education", label: "חינוך: דרישה ובתי ספר" }] : []),
+    { id: "community", label: "קהילה, בריאות ודת" },
+    ...(g ? [{ id: "group", label: `קבוצת ${g.name}` }] : []),
+  ];
 
   const classRows: KV[] = CLASS_KEYS.filter((k) => r.classes[k] != null).map((k) => ({ key: k, label: CLASS_LABEL[k], value: r.classes[k] }));
   const basics: KV[] = [
@@ -227,8 +236,11 @@ export default function RovaClient({ id }: { id: string }) {
           <Link className="btn ghost small" href={`/program/${next.id}`} data-testid="next">הבא: {next.name}</Link>
         </div>
       </nav>
+      <div style={{ marginTop: 12 }}>
+        <RovaButtons current={r.id} compact />
+      </div>
 
-      <header className="stack" style={{ marginTop: 12 }}>
+      <header className="stack" style={{ marginTop: 20 }}>
         <div className="label">צורכי ציבור וקיבולת</div>
         <div className="row-between">
           <h1 className="h2">{r.name}</h1>
@@ -253,7 +265,7 @@ export default function RovaClient({ id }: { id: string }) {
         </div>
       )}
 
-      <div className="grid grid-2" style={{ marginTop: 16, alignItems: "start" }}>
+      <div className="grid grid-2 eq" style={{ marginTop: 16 }}>
         {cap ? (
           <CapacityCard cap={cap} via={viaGroup} page={PAGES.carrying} />
         ) : (
@@ -262,65 +274,79 @@ export default function RovaClient({ id }: { id: string }) {
             <p className="muted" style={{ margin: 0 }}>אין נתון כושר נשיאה לרובע זה. {PROGRAM.meta.methodology.threshold_note}.</p>
           </div>
         )}
-        <div className="stack">
+        <div className="map-col">
+          <ProgramMap mode="capacity" focusId={r.id} height={340} fill onState={(_, a) => setApprox(a)} legend={<MapLegend mode="capacity" />} />
           {approx && <ApproxBanner />}
-          <ProgramMap mode="capacity" focusId={r.id} height={340} onState={(_, a) => setApprox(a)} />
         </div>
       </div>
 
-      <div className="grid grid-2" style={{ marginTop: 16 }}>
-        <Section title="נתוני בסיס" page={PAGES.capacity} id="basics">
-          <DataTable data={basics} columns={kvCols} caption="נתוני בסיס" testId="basics-table" />
-        </Section>
-        <Section title="כיתות נדרשות לפי סוג (מימוש מקסימלי)" page={PAGES.education} id="classes">
-          {classRows.length ? <DataTable data={classRows} columns={kvCols} caption="כיתות נדרשות" testId="classes-table" /> : <p className="muted" style={{ margin: 0 }}>אין כיתות נדרשות במקור לרובע זה.</p>}
-        </Section>
+      <section className="stack" aria-label="נתוני הרובע לפי נושא" style={{ marginTop: 28 }}>
+        <Tabs tabs={tabs} active={tab} onChange={setTab} label="נושא" />
 
-        {r.units && (
-          <Section title="יחידות דיור" page={slide} id="units">
-            <DataTable data={kv(r.units, UNITS_LABEL)} columns={kvCols} caption="יחידות דיור" testId="units-table" />
-          </Section>
+        {tab === "overview" && (
+          <div className="grid grid-2 eq" role="tabpanel" id="panel-overview" aria-labelledby="tab-overview">
+            <Section title="נתוני בסיס" page={PAGES.capacity} id="basics">
+              <DataTable data={basics} columns={kvCols} caption="נתוני בסיס" testId="basics-table" />
+            </Section>
+            <Section title="כיתות נדרשות לפי סוג (מימוש מקסימלי)" page={PAGES.education} id="classes">
+              {classRows.length ? <DataTable data={classRows} columns={kvCols} caption="כיתות נדרשות" testId="classes-table" /> : <p className="muted" style={{ margin: 0 }}>אין כיתות נדרשות במקור לרובע זה.</p>}
+            </Section>
+            {r.units && (
+              <Section title="יחידות דיור" page={slide} id="units">
+                <DataTable data={kv(r.units, UNITS_LABEL)} columns={kvCols} caption="יחידות דיור" testId="units-table" />
+              </Section>
+            )}
+            {r.potential && (
+              <Section title="פוטנציאל תוספת כיתות יסודי" page={slide} id="potential">
+                <DataTable data={kv(r.potential, { binyanit: "בניינית", renewal: "תוכניות התחדשות", total: "סה\"כ", binyanit_note: "הערה" })} columns={kvCols} caption="פוטנציאל" testId="potential-table" />
+              </Section>
+            )}
+          </div>
         )}
-        {r.assumptions && (
-          <Section title="הנחות יסוד" page={slide} id="ass">
-            <Assumptions a={r.assumptions} />
-          </Section>
-        )}
-        {r.primary_demand && (
-          <Section title="דרישה פרוגרמטית לכיתות יסודי" page={slide} id="dem">
-            <PrimaryDemand d={r.primary_demand} />
-          </Section>
-        )}
-        {r.schools && (
-          <Section title="בתי ספר יסודיים קיימים" page={slide} id="schools">
-            <DataTable data={r.schools} columns={schoolCols} caption="בתי ספר קיימים" testId="schools-table" />
-          </Section>
-        )}
-        {r.renewal_projects && (
-          <Section title='פרויקטי התחדשות (יח"ד תוספתיות)' page={slide} id="renewal">
-            <DataTable data={r.renewal_projects.map((p) => ({ name: p.name, value: p.added_units }))} columns={namedCols("פרויקט", 'יח"ד תוספתיות')} caption="פרויקטי התחדשות" testId="renewal-table" />
-          </Section>
-        )}
-        {r.new_schools_proposed && (
-          <Section title="בתי ספר יסודיים מוצעים" page={slide} id="newschools">
-            <DataTable data={r.new_schools_proposed.map((p) => ({ name: p.name, value: p.classes }))} columns={namedCols("בית ספר", "כיתות")} caption="בתי ספר מוצעים" testId="newschools-table" />
-          </Section>
-        )}
-        {r.potential && (
-          <Section title="פוטנציאל תוספת כיתות יסודי" page={slide} id="potential">
-            <DataTable data={kv(r.potential, { binyanit: "בניינית", renewal: "תוכניות התחדשות", total: "סה\"כ", binyanit_note: "הערה" })} columns={kvCols} caption="פוטנציאל" testId="potential-table" />
-          </Section>
-        )}
-        <Section title="צורכי קהילה, בריאות ודת" page={PAGES.community} id="community">
-          <CommunityTable c={r.community_sqm} testId="community-table" />
-        </Section>
-      </div>
 
-      {g && <GroupBlock g={g} />}
+        {tab === "education" && (
+          <div className="grid grid-2 eq" role="tabpanel" id="panel-education" aria-labelledby="tab-education">
+            {r.assumptions && (
+              <Section title="הנחות יסוד" page={slide} id="ass">
+                <Assumptions a={r.assumptions} />
+              </Section>
+            )}
+            {r.primary_demand && (
+              <Section title="דרישה פרוגרמטית לכיתות יסודי" page={slide} id="dem">
+                <PrimaryDemand d={r.primary_demand} />
+              </Section>
+            )}
+            {r.schools && (
+              <Section title="בתי ספר יסודיים קיימים" page={slide} id="schools">
+                <DataTable data={r.schools} columns={schoolCols} caption="בתי ספר קיימים" testId="schools-table" />
+              </Section>
+            )}
+            {r.renewal_projects && (
+              <Section title='פרויקטי התחדשות (יח"ד תוספתיות)' page={slide} id="renewal">
+                <DataTable data={r.renewal_projects.map((p) => ({ name: p.name, value: p.added_units }))} columns={namedCols("פרויקט", 'יח"ד תוספתיות')} caption="פרויקטי התחדשות" testId="renewal-table" />
+              </Section>
+            )}
+            {r.new_schools_proposed && (
+              <Section title="בתי ספר יסודיים מוצעים" page={slide} id="newschools">
+                <DataTable data={r.new_schools_proposed.map((p) => ({ name: p.name, value: p.classes }))} columns={namedCols("בית ספר", "כיתות")} caption="בתי ספר מוצעים" testId="newschools-table" />
+              </Section>
+            )}
+          </div>
+        )}
 
-      <section className="stack" style={{ marginTop: 32 }} aria-label="רובעים">
-        <h2 className="h3">רובעים אחרים</h2>
-        <RovaButtons current={r.id} />
+        {tab === "community" && (
+          <div role="tabpanel" id="panel-community" aria-labelledby="tab-community">
+            <Section title="צורכי קהילה, בריאות ודת" page={PAGES.community} id="community">
+              <CommunityTable c={r.community_sqm} testId="community-table" />
+            </Section>
+          </div>
+        )}
+
+        {tab === "group" && g && (
+          <div role="tabpanel" id="panel-group" aria-labelledby="tab-group">
+            <GroupBlock g={g} />
+          </div>
+        )}
       </section>
     </div>
   );
