@@ -18,3 +18,13 @@ describe("grounding guard", () => {
     expect(groundedAnswer("בבניין בן 4 קומות חלות הוראות הסעיף (4.1.2, 7.2.1).", src, "בניין בן 4 קומות", ["4.1.2"])).toBe(true);
   });
 });
+
+describe("grounding guard, unnumbered sources", () => {
+  const src = "קביעת הוראות לחיזוק מבנים בפני רעידות אדמה ומיגונם";
+  it("accepts a citation by source name", () => {
+    expect(groundedAnswer("התכנית קובעת הוראות לחיזוק מבנים בפני רעידות אדמה (מטרות התכנית).", src, "", ["מטרות התכנית (מינהל התכנון)"])).toBe(true);
+  });
+  it("still rejects an answer with no citation", () => {
+    expect(groundedAnswer("התכנית קובעת הוראות לחיזוק מבנים.", src, "", ["מטרות התכנית (מינהל התכנון)"])).toBe(false);
+  });
+});

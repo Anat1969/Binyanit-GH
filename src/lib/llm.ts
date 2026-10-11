@@ -95,5 +95,9 @@ export function groundedAnswer(answer: string, sources: string, question: string
   sections.forEach((s) => (s.match(NUM) ?? []).forEach((n) => allowed.add(n)));
   const used = (answer.match(NUM) ?? []).map((n) => n.replace(/,/g, ""));
   if (used.some((n) => !allowed.has(n) && !allowed.has(n.replace(/\.0+$/, "")))) return false;
-  return sections.some((s) => s.split(/[,\s]+/).some((part) => /\d/.test(part) && answer.includes(part)));
+  return sections.some((s) => {
+    if (/\d/.test(s)) return s.split(/[,\s]+/).some((part) => /\d/.test(part) && answer.includes(part));
+    // Sources without a section number (e.g. "מטרות התכנית (מינהל התכנון)") are cited by their first two words.
+    return answer.includes(s.split(/\s+/).slice(0, 2).join(" "));
+  });
 }
