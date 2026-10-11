@@ -44,15 +44,25 @@ test("home: facts, CTAs and navigation", async ({ page }) => {
   await expect(page.locator("main")).toContainText("7.2.1");
   await noHorizontalScroll(page);
 
-  await page.locator("main").getByRole("link", { name: "בדיקת כתובת" }).click();
+  await page.locator(".hero").getByRole("link", { name: "בדיקת כתובת" }).click();
   await expect(page).toHaveURL(/\/check$/);
   await page.goto("/");
-  await page.locator("main").getByRole("link", { name: "שאלה על התכנית" }).click();
+  await page.locator(".hero").getByRole("link", { name: "שאלות על התכנית" }).click();
   await expect(page).toHaveURL(/\/qa$/);
+
+  // The flow strip leads through the site in order; the qa page sits right after the provisions.
+  await expect(page.getByRole("navigation", { name: "המשך באתר" }).getByRole("link", { name: /הקודם.*הוראות התכנית/ })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "המשך באתר" }).getByRole("link", { name: /הבא.*בדיקת כתובת/ })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "מיקום באתר" })).toContainText("שאלות על התכנית");
+  await expect(page.getByRole("img", { name: "עיריית אשדוד" })).toBeVisible();
+  await page.goto("/");
+  await expect(page.locator(".site-map-link")).toHaveCount(9);
 
   for (const [name, path] of [
     ["התכנית בקצרה", "/plan/603-0972307"],
-    ["תכנית", "/provisions"],
+    ["הוראות התכנית", "/provisions"],
+    ["מפת התשריט", "/sheet"],
+    ["צורכי ציבור", "/program"],
     ["מסמכים", "/documents"],
     ["מכסות ברובעים", "/quarters"],
     ["רחובות ותנועה", "/traffic"],
@@ -299,7 +309,7 @@ test("qa: examples, answer with citations, refusal, not found, error", async ({ 
   await box.fill("כמה קומות אפשר להוסיף לבניין שלי?");
   await page.getByRole("button", { name: "שליחה" }).click();
   await expect(page.getByText("הסוכן אינו מחשב זכויות").first()).toBeVisible();
-  await page.getByRole("link", { name: "למעבר לבדיקת כתובת" }).click();
+  await page.getByTestId("qa-answer").last().getByRole("link", { name: "בדיקת כתובת" }).click();
   await expect(page).toHaveURL(/\/check$/);
   await page.goBack();
 
@@ -350,7 +360,22 @@ test("provisions: seven chapters, one open chapter and one open section at a tim
   await chapters.nth(2).click();
   await expect(chapters.nth(2)).toHaveAttribute("aria-expanded", "false");
   await noHorizontalScroll(page);
-  await page.locator("main").getByRole("link", { name: "חיפוש בנוסח המלא" }).click();
+
+  // Search inside the plan: matching sections open with the words marked, other chapters hide.
+  const search = page.getByRole("searchbox");
+  await search.fill("תכסית");
+  await expect(page.getByTestId("prov-count")).toContainText("סעיפים מתאימים");
+  await expect(page.locator(".prov-detail mark.pt-hit").first()).toBeVisible();
+  const shown = await chapters.count();
+  expect(shown).toBeGreaterThan(0);
+  expect(shown).toBeLessThan(7);
+  await search.fill("מילהשאינהקיימת");
+  await expect(page.getByTestId("prov-none")).toBeVisible();
+  await search.fill("");
+  await expect(chapters).toHaveCount(7);
+  await page.getByRole("button", { name: "תכסית", exact: true }).click();
+  await expect(page.locator(".prov-detail mark.pt-hit").first()).toBeVisible();
+  await page.locator("main").getByRole("link", { name: "שאלות על התכנית" }).first().click();
   await expect(page).toHaveURL(/\/qa$/);
 });
 
@@ -429,10 +454,11 @@ test("documents: open editing without a code, rename, reclassify, remove, add se
   await noHorizontalScroll(page);
 });
 
-test("qa page shows the plan text section with a clear state", async ({ page }) => {
+test("qa page has no verbatim plan text; it points to the search in the provisions", async ({ page }) => {
   await mockBase(page);
   await page.goto("/qa");
-  await expect(page.getByTestId("plan-text")).toBeVisible();
-  await expect(page.getByTestId("plan-text").locator(".state").first()).toBeVisible();
+  await expect(page.getByTestId("plan-text")).toHaveCount(0);
   await expect(page.getByText("אין להזין פרטים אישיים")).toBeVisible();
+  await page.locator("main").getByRole("link", { name: "חיפוש בהוראות התכנית" }).click();
+  await expect(page).toHaveURL(/\/provisions$/);
 });

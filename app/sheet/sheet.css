@@ -24,14 +24,14 @@
 }
 .sheet-layers li:last-child { border-bottom: 0; }
 .sheet-layers label { cursor: pointer; font-weight: 500; line-height: 1.3; font-size: 15px; }
-.sheet-layers small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; }
+.sheet-layers small { display: block; font-weight: 400; color: var(--muted); font-size: var(--fs-xs); }
 .sheet-layers input[type="checkbox"] { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
 .sheet-layers .off label { color: var(--muted); }
 .sheet-layers .n { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .sheet-layers .pending { opacity: 0.75; }
 .sheet-layers .pending label { cursor: default; }
 .sheet-layers .tag {
-  font-size: 11.5px; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--ink-2); white-space: nowrap;
+  font-size: var(--fs-xs); padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--ink-2); white-space: nowrap;
 }
 .tashrit .sw { width: 34px; height: 14px; border-radius: 2px; }
 .tashrit .sw.line { height: 5px; }
@@ -40,12 +40,6 @@
 
 .sheet-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .sheet-row input[type="range"] { width: 120px; accent-color: var(--accent); }
-.tchip {
-  font: inherit; font-size: 14px; min-height: 36px; padding: 0 12px; border-radius: 999px;
-  border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); cursor: pointer;
-}
-.tchip:hover { border-color: var(--ink); }
-.tchip[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
 .sheet-probe { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: 14px 16px; }
 .sheet-probe h3 { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
@@ -75,11 +69,11 @@
 .sheet-loading, .sheet-map > .state { position: absolute; inset-inline: 16px; top: 16px; z-index: 2; }
 
 .sheet-list { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 4px; }
-.sheet-small { font-size: 13.5px; margin: 0; }
+.sheet-small { font-size: var(--fs-s); margin: 0; }
 .sheet-tbl { overflow-x: auto; }
 .sheet-tbl table { border-collapse: collapse; width: 100%; font-size: 14px; }
 .sheet-tbl th, .sheet-tbl td { text-align: start; padding: 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
-.sheet-tbl th { font-weight: 500; color: var(--muted); font-size: 12.5px; }
+.sheet-tbl th { font-weight: 600; color: var(--ink-2); font-size: var(--fs-xs); }
 .sheet-tbl td.num { white-space: nowrap; }
 
 @media (max-width: 860px) {

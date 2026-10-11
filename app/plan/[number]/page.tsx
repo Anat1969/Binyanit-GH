@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PageHead } from "@/components/PageHead";
+import { Prose } from "@/components/Prose";
 import { Reveal } from "@/components/Reveal";
+import { PAGE } from "@/content/site";
 import { PLAN } from "@/content/plan-meta";
 import { STORY } from "@/content/plan-story";
 import { DISCLAIMER } from "@/engine/config";
@@ -23,16 +26,13 @@ export default async function PlanPage({ params }: { params: Promise<{ number: s
   if (number !== PLAN.number) notFound();
   return (
     <article className="wrap section story">
-      <header className="story-head stack">
-        <div className="label">{STORY.kicker}</div>
-        <h1 className="display">{STORY.title}</h1>
-        <p className="lead" style={{ margin: 0 }}>{STORY.deck}</p>
+      <PageHead href={PAGE.story.href} kicker={STORY.kicker} title={STORY.title} lead={STORY.deck}>
         <div className="state info" style={{ maxWidth: 760 }}>
           <b>{STORY.status.label}</b>
-          {STORY.status.text}
+          <Prose text={STORY.status.text} />
           <div className="cite" style={{ marginTop: 6, whiteSpace: "normal" }}>מקור: {STORY.status.source}</div>
         </div>
-      </header>
+      </PageHead>
 
       <div className="story-grid">
         <nav className="story-toc" aria-label="פרקים">
@@ -42,7 +42,10 @@ export default async function PlanPage({ params }: { params: Promise<{ number: s
               <li key={c.id}><a href={`#${c.id}`}><span className="num">{i + 1}</span>{c.title}</a></li>
             ))}
           </ol>
-          <Link href="/check" className="btn small" style={{ marginTop: 16 }}>בדיקת כתובת</Link>
+          <div className="row-gap" style={{ marginTop: 16 }}>
+            <Link href={PAGE.provisions.href} className="btn small ghost">{PAGE.provisions.label}</Link>
+            <Link href={PAGE.check.href} className="btn small">{PAGE.check.label}</Link>
+          </div>
         </nav>
 
         <div className="story-body">
@@ -51,8 +54,8 @@ export default async function PlanPage({ params }: { params: Promise<{ number: s
               <section id={c.id} className="card raised stack chapter" aria-labelledby={`${c.id}-t`}>
                 <div className="label">פרק {i + 1}</div>
                 <h2 id={`${c.id}-t`} className="h2">{c.title}</h2>
-                <p className="chapter-lead">{c.lead}</p>
-                {c.paragraphs.map((p, j) => <p key={j} style={{ margin: 0 }}>{p}</p>)}
+                <Prose className="chapter-lead" text={c.lead} />
+                {c.paragraphs.map((p, j) => <Prose key={j} text={p} />)}
                 {c.table && (
                   <div className="table-wrap">
                     <table className="table rules" data-testid={`table-${c.id}`}>

@@ -5,10 +5,13 @@ import { buildProvisions } from "@/content/plan-provisions";
 import { DISCLAIMER } from "@/engine/config";
 import { getPlanText } from "@/lib/data";
 import ProvisionsClient from "./ProvisionsClient";
+import { PageHead } from "@/components/PageHead";
+import { Prose } from "@/components/Prose";
+import { PAGE } from "@/content/site";
 
 export const metadata: Metadata = {
   title: `הוראות תכנית ${PLAN.number} | התחדשות בניינית אשדוד`,
-  description: "הוראות התכנית בשבעה פרקים, עם הפניה לסעיפים.",
+  description: "הוראות התכנית בשבעה פרקים, עם חיפוש בתוך התכנית והפניה לסעיפים.",
 };
 export const revalidate = 300;
 
@@ -18,15 +21,15 @@ export default async function Page() {
   const hasVerbatim = chapters.some((c) => c.sections.some((s) => s.status === "verbatim"));
   return (
     <article className="wrap section provisions">
-      <header className="story-head stack">
-        <div className="label">תכנית מס׳ {PLAN.number} · אשדוד</div>
-        <h1 className="h2" style={{ fontWeight: 200 }}>{PLAN.officialName.replace(/, אשדוד$/, "")}</h1>
-        <p className="lead" style={{ margin: 0 }}>
-          הוראות התכנית בשבעה פרקים. לחיצה על פרק פותחת את הסעיפים שלו, ולחיצה על סעיף פותחת את פרטיו. פתיחת כותרת אחרת סוגרת את הקודמת.
-        </p>
+      <PageHead
+        href={PAGE.provisions.href}
+        kicker={<>תכנית מס׳ <span className="num">{PLAN.number}</span> · אשדוד</>}
+        title={PLAN.officialName.replace(/, אשדוד$/, "")}
+        lead="הוראות התכנית בשבעה פרקים. אפשר לחפש מילה או מספר סעיף, או לפתוח פרק ואז סעיף."
+      >
         <div className="state info" style={{ maxWidth: 760 }}>
-          <b>הוראות התכנית</b>
-          {PLAN.number} · {PLAN.status}. {PLAN.approvalNote}
+          <b>מה מחייב</b>
+          <Prose text={`${PLAN.number} · ${PLAN.status}. ${PLAN.approvalNote}`} />
           <div style={{ marginTop: 6 }}>
             המסמך המחייב הוא הוראות התכנית באתר{" "}
             <a href={PLAN.mavatUrl} target="_blank" rel="noopener noreferrer" className="src-link">תכנון זמין</a>.
@@ -40,13 +43,13 @@ export default async function Page() {
             סעיפים המסומנים &quot;נוסח עבודה&quot; הם תקציר כללים, לא הנוסח המחייב. הם יוחלפו בנוסח ההוראות לאחר טעינתו.
           </div>
         )}
-      </header>
+      </PageHead>
 
       <ProvisionsClient chapters={chapters} />
 
       <div className="row-gap" style={{ marginTop: 24 }}>
-        <Link href="/qa" className="btn ghost small">חיפוש בנוסח המלא</Link>
-        <Link href={`/plan/${PLAN.number}`} className="btn ghost small">התכנית בקצרה</Link>
+        <Link href={PAGE.qa.href} className="btn small">{PAGE.qa.label}</Link>
+        <Link href={PAGE.story.href} className="btn ghost small">{PAGE.story.label}</Link>
       </div>
       <p className="disclaimer">{DISCLAIMER}</p>
     </article>

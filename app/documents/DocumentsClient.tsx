@@ -118,7 +118,7 @@ function Uploader({ count, onUploaded }: { count: number; onUploaded: () => void
       onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
       onDragLeave={() => setDrag(false)}
       onDrop={(e) => { e.preventDefault(); setDrag(false); add(e.dataTransfer.files); }}>
-      <div className="label" id="up-title">הוספת מסמכים</div>
+      <h2 className="h3" id="up-title">הוספת מסמכים</h2>
       <label className="field">
         <span>בחירת קבצים (אפשר כמה יחד, או לגרור לכאן)</span>
         <input className="input" type="file" name="files" multiple accept={ACCEPT}

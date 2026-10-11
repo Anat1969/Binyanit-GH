@@ -3,6 +3,8 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { DataTable, type ColumnDef } from "@/program/DataTable";
+import { PageHead } from "@/components/PageHead";
+import { PAGE } from "@/content/site";
 import { downloadCsv, toCsv } from "@/program/csv";
 import { PAGES, PROGRAM, capacityOf, fmt, type Rova } from "@/program/data";
 import { CLASS_KEYS, CLASS_LABEL, COMMUNITY_KEYS, COMMUNITY_LABEL } from "@/program/labels";
@@ -158,15 +160,20 @@ export default function ProgramClient() {
   ];
 
   return (
-    <div className="wrap program" style={{ paddingTop: 32, paddingBottom: 48 }}>
-      <header className="stack">
-        <div className="label">נספח פרוגרמה לצורכי ציבור וקיבולת · תכנית {P.meta.plan_number}</div>
-        <h1 className="h2">באיזה רובע יש כושר נשיאה?</h1>
-        <p className="lead" style={{ margin: 0 }}>{M.limiting_factor}</p>
-        <p className="muted" style={{ margin: 0, fontSize: 14 }}>
+    <div className="wrap section program">
+      <PageHead
+        href={PAGE.program.href}
+        kicker={<>נספח פרוגרמה לצורכי ציבור וקיבולת · תכנית <span className="num">{P.meta.plan_number}</span></>}
+        title="באיזה רובע יש כושר נשיאה?"
+        lead={M.limiting_factor}
+      >
+        <p className="muted" style={{ margin: 0, fontSize: "var(--fs-s)" }}>
           {P.meta.source_document}. {P.meta.approval}. <SourceLink page={1} label="עמוד השער" />
         </p>
-      </header>
+        <div className="row-gap">
+          <Link href={PAGE.quarters.href} className="btn small ghost">{PAGE.quarters.label}</Link>
+        </div>
+      </PageHead>
 
       <section aria-label="מספרי מפתח" className="kpis" data-testid="kpis">
         {KPIS.map((k) => (
@@ -189,7 +196,7 @@ export default function ProgramClient() {
             <li>{M.guide}. {M.threshold_note}.</li>
           </ul>
           <SourceLink page={PAGES.methodology} />
-          <p className="muted" style={{ margin: 0, fontSize: 13 }}>{P.meta.data_status}</p>
+          <p className="muted" style={{ margin: 0, fontSize: "var(--fs-xs)" }}>{P.meta.data_status}</p>
         </div>
       </details>
 

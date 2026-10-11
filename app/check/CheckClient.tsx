@@ -13,7 +13,9 @@ import {
   type StreetClass,
 } from "@/engine";
 import { QUARTERS, STREET_CLASS_LABEL } from "@/content/plan-meta";
+import { PageHead } from "@/components/PageHead";
 import { RouteCard } from "@/components/RouteCard";
+import { PAGE } from "@/content/site";
 import { ReportSheet } from "@/components/ReportSheet";
 import { RichText, SummaryView } from "@/components/Summary";
 import { summaryBlocks } from "@/lib/summary";
@@ -389,19 +391,17 @@ export default function CheckClient() {
   ] as const;
 
   return (
-    <div className="wrap" style={{ paddingTop: 32 }}>
-      <div className="stack" style={{ marginBottom: 20 }}>
-        <div className="label">בדיקת כתובת</div>
-        <h1 className="h2">מה אפשר לעשות בבניין?</h1>
-        <p className="lead" style={{ margin: 0 }}>
-          שלושה שלבים: מיקום, נתוני הבניין, ותוצאה לשלושת המסלולים עם הפניה לסעיפי התכנית.
-        </p>
-      </div>
+    <div className="wrap section">
+      <PageHead
+        href={PAGE.check.href}
+        title="מה אפשר לעשות בבניין?"
+        lead="שלושה שלבים: מיקום, נתוני הבניין, ותוצאה לשלושת המסלולים, עם הפניה לסעיפי התכנית."
+      />
 
       <div className="card examples" aria-labelledby="ex-title">
         <div>
-          <div className="label" id="ex-title">דוגמאות להמחשה</div>
-          <p className="muted" style={{ margin: "4px 0 0", fontSize: 14 }}>נתונים מומצאים, לא של בניין אמיתי. בחירה ממלאת את הטופס ומחשבת.</p>
+          <h2 className="h3" id="ex-title">דוגמאות להמחשה</h2>
+          <p className="muted" style={{ margin: "4px 0 0", fontSize: "var(--fs-s)" }}>נתונים מומצאים, לא של בניין אמיתי. בחירה ממלאת את הטופס ומחשבת.</p>
         </div>
         <div className="examples-btns">
           {EXAMPLES.map((ex) => (
@@ -591,8 +591,8 @@ export default function CheckClient() {
 
         <div className="upload" data-testid="upload">
           <div className="stack" style={{ gap: 4 }}>
-            <b>מילוי אוטומטי ממסמכים</b>
-            <span className="muted" style={{ fontSize: 14 }}>
+            <b style={{ display: "block" }}>מילוי אוטומטי ממסמכים</b>
+            <span className="muted" style={{ fontSize: "var(--fs-s)", display: "block" }}>
               היתר בנייה, מפת מדידה או נסח טאבו בקובץ PDF. הקובץ נקרא בדפדפן ואינו נשלח לשרת. כל ערך שנמצא מסומן "מהמסמך" וניתן לתיקון.
             </span>
           </div>

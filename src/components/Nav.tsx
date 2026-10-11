@@ -1,28 +1,29 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const LINKS = [
-  { href: "/", label: "ראשי" },
-  { href: "/plan/603-0972307", label: "התכנית בקצרה" },
-  { href: "/provisions", label: "תכנית" },
-  { href: "/check", label: "בדיקת כתובת" },
-  { href: "/traffic", label: "רחובות ותנועה" },
-  { href: "/sheet", label: "מפת התשריט" },
-  { href: "/program", label: "צורכי ציבור" },
-  { href: "/documents", label: "מסמכים" },
-  { href: "/qa", label: "שאלות על התכנית" },
-  { href: "/quarters", label: "מכסות ברובעים" },
-];
+import { useEffect, useRef } from "react";
+import { GROUPS, HOME, pageOf } from "@/content/site";
 
 export function Nav() {
   const path = usePathname();
+  const current = pageOf(path)?.href;
+  const ref = useRef<HTMLElement>(null);
+  // On a phone the menu scrolls sideways: keep the current page in view.
+  useEffect(() => {
+    ref.current?.querySelector('[aria-current="page"]')?.scrollIntoView({ block: "nearest", inline: "center" });
+  }, [current]);
+  const link = (href: string, label: string) => (
+    <Link key={href} href={href} aria-current={current === href ? "page" : undefined}>
+      {label}
+    </Link>
+  );
   return (
-    <nav className="nav" aria-label="ניווט ראשי">
-      {LINKS.map((l) => (
-        <Link key={l.href} href={l.href} aria-current={path === l.href || (l.href !== "/" && path.startsWith(l.href + "/")) || (l.href.startsWith("/plan") && path.startsWith("/plan")) ? "page" : undefined}>
-          {l.label}
-        </Link>
+    <nav ref={ref} className="nav" aria-label="ניווט ראשי">
+      {link(HOME.href, HOME.label)}
+      {GROUPS.map((g) => (
+        <div key={g.id} className="nav-group" role="group" aria-label={g.label}>
+          {g.pages.map((p) => link(p.href, p.label))}
+        </div>
       ))}
     </nav>
   );

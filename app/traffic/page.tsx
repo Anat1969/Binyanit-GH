@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TRAFFIC_COPY, TRAFFIC_DOC } from "@/content/traffic";
+import { PageHead } from "@/components/PageHead";
+import { Prose } from "@/components/Prose";
+import { PAGE } from "@/content/site";
 import TrafficMap from "./TrafficMap";
 
 export const metadata: Metadata = {
@@ -11,18 +14,15 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <div className="wrap section">
-      <header className="story-head stack">
-        <div className="label">{TRAFFIC_COPY.kicker}</div>
-        <h1 className="h2">{TRAFFIC_COPY.title}</h1>
-        <p className="lead">{TRAFFIC_COPY.deck}</p>
-        <div className="row-gap muted" style={{ fontSize: 13 }}>
+      <PageHead href={PAGE.traffic.href} kicker={TRAFFIC_COPY.kicker} title={TRAFFIC_COPY.title} lead={TRAFFIC_COPY.deck}>
+        <div className="row-gap muted" style={{ fontSize: "var(--fs-xs)" }}>
           <span>עורך: {TRAFFIC_DOC.editor}</span>
           <span>תאריך: <span className="num">{TRAFFIC_DOC.date}</span></span>
           <span>קנ&quot;מ <span className="num">{TRAFFIC_DOC.scale}</span></span>
           <span className="chip">{TRAFFIC_DOC.status}</span>
           <span>{TRAFFIC_DOC.stamp}</span>
         </div>
-      </header>
+      </PageHead>
 
       <TrafficMap />
 
@@ -30,7 +30,7 @@ export default function Page() {
         {TRAFFIC_COPY.read.map((r) => (
           <article key={r.title} className="card stack">
             <h2 className="h3">{r.title}</h2>
-            <p style={{ margin: 0 }}>{r.text}</p>
+            <Prose text={r.text} />
             <span className="cite">{r.sources}</span>
           </article>
         ))}
@@ -45,14 +45,12 @@ export default function Page() {
         </div>
         <div className="card stack">
           <h2 className="h3">הרחוב של בניין מסוים</h2>
-          <p style={{ margin: 0 }} className="muted">
-            בבדיקת הכתובת סיווג הרחוב נקרא משכבות התשריט. כשהוא לא נמצא, בוחרים אותו ידנית, ואפשר להיעזר במפה הזו.
-          </p>
+          <Prose className="muted" text="בבדיקת הכתובת סיווג הרחוב נקרא משכבות התשריט. כשהוא לא נמצא, בוחרים אותו ידנית, ואפשר להיעזר במפה הזו." />
           <div className="row-gap">
-            <Link href="/check" className="btn small">לבדיקת כתובת</Link>
-            <Link href="/qa" className="btn small ghost">שאלות על התכנית</Link>
+            <Link href={PAGE.check.href} className="btn small">{PAGE.check.label}</Link>
+            <Link href={PAGE.sheet.href} className="btn small ghost">{PAGE.sheet.label}</Link>
           </div>
-          <p style={{ margin: 0 }} className="muted">{TRAFFIC_COPY.next}</p>
+          <Prose className="muted" text={TRAFFIC_COPY.next} />
           <span className="cite">מקור: {TRAFFIC_DOC.file}</span>
         </div>
       </section>

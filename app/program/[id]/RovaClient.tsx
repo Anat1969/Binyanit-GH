@@ -1,6 +1,9 @@
 "use client";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { PageHead } from "@/components/PageHead";
+import { Prose } from "@/components/Prose";
+import { PAGE } from "@/content/site";
 import { useState } from "react";
 import { DataTable, type ColumnDef } from "@/program/DataTable";
 import {
@@ -228,25 +231,10 @@ export default function RovaClient({ id }: { id: string }) {
   ];
 
   return (
-    <div className="wrap program" style={{ paddingTop: 28, paddingBottom: 48 }}>
-      <nav className="row-between crumbs" aria-label="ניווט בין רובעים">
-        <Link href="/program">כל הרובעים</Link>
-        <div className="row-gap">
-          <Link className="btn ghost small" href={`/program/${prev.id}`} data-testid="prev">הקודם: {prev.name}</Link>
-          <Link className="btn ghost small" href={`/program/${next.id}`} data-testid="next">הבא: {next.name}</Link>
-        </div>
-      </nav>
-      <div style={{ marginTop: 12 }}>
-        <RovaButtons current={r.id} compact />
-      </div>
-
-      <header className="stack" style={{ marginTop: 20 }}>
-        <div className="label">צורכי ציבור וקיבולת</div>
-        <div className="row-between">
-          <h1 className="h2">{r.name}</h1>
-          <StatusBadge r={r} />
-        </div>
-        {summary && <p className="lead" style={{ margin: 0 }} data-testid="rova-summary">{summary}{!r.summary && g ? ` (סיכום הקבוצה ${g.name})` : ""}</p>}
+    <div className="wrap section program">
+      <PageHead href={`/program/${r.id}`} kicker="צורכי ציבור וקיבולת" title={r.name}>
+        <div><StatusBadge r={r} /></div>
+        {summary && <div data-testid="rova-summary"><Prose className="lead" text={`${summary}${!r.summary && g ? ` (סיכום הקבוצה ${g.name})` : ""}`} /></div>}
         <div className="row-gap">
           {slide && <SourceLink page={slide} label={`פתח בעמוד ${slide} של הנספח`} />}
           <SourceLink page={PAGES.capacity} label="עמ׳ 4" />
@@ -254,7 +242,18 @@ export default function RovaClient({ id }: { id: string }) {
           <SourceLink page={PAGES.community} label="עמ׳ 15" />
           {cap && <SourceLink page={PAGES.carrying} label="עמ׳ 16" />}
         </div>
-      </header>
+      </PageHead>
+
+      <nav className="stack rova-nav" aria-label="ניווט בין רובעים">
+        <div className="row-between">
+          <Link href={PAGE.program.href} className="src-link">כל הרובעים</Link>
+          <div className="row-gap">
+            <Link className="btn ghost small" href={`/program/${prev.id}`} data-testid="prev">הקודם: {prev.name}</Link>
+            <Link className="btn ghost small" href={`/program/${next.id}`} data-testid="next">הבא: {next.name}</Link>
+          </div>
+        </div>
+        <RovaButtons current={r.id} compact />
+      </nav>
 
       <Flags flags={r.data_flags} />
 

@@ -40,7 +40,7 @@ test("traffic: layers load, legend toggles, only-this, zoom, gush search, no err
   await expect(page.getByTestId("gush-msg")).toContainText("2018");
   await expect(page.getByTestId("traffic-zoom")).toHaveText("×4.0");
 
-  await page.getByRole("link", { name: "לבדיקת כתובת" }).click();
+  await page.locator("main").getByRole("link", { name: "בדיקת כתובת", exact: true }).first().click();
   await expect(page).toHaveURL(/\/check$/);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(1);

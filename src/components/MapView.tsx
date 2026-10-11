@@ -12,7 +12,8 @@ const OSM_RASTER = {
   },
   layers: [{ id: "osm", type: "raster" as const, source: "osm", paint: { "raster-saturation": -0.8 } }],
 };
-const AERIAL_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+const RTL_PLUGIN_URL = "/vendor/mapbox-gl-rtl-text.js";
+const AERIAL_TILES ="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
 interface Props {
   point: { lat: number; lon: number } | null;
@@ -34,6 +35,10 @@ export default function MapView({ point, onPick }: Props) {
     (async () => {
       try {
         const ml = (await import("maplibre-gl")).default;
+        // Without this plugin MapLibre draws Hebrew street names left to right (reversed letters).
+        if (ml.getRTLTextPluginStatus() === "unavailable") {
+          Promise.resolve(ml.setRTLTextPlugin(RTL_PLUGIN_URL, false)).catch(() => undefined);
+        }
         let style: unknown = OSM_RASTER;
         try {
           const res = await fetch(STYLE_URL, { signal: AbortSignal.timeout(6000) });

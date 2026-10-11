@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { PageHead } from "@/components/PageHead";
+import { PAGE } from "@/content/site";
 import { getQuarters } from "@/lib/data";
 
 export const metadata: Metadata = { title: "מכסות ברובעים | התחדשות בניינית אשדוד" };
@@ -12,11 +15,16 @@ export default async function Page() {
   const anyReported = data.some((q) => q.units_used != null);
   return (
     <div className="wrap section stack">
-      <div className="label">לוח מכסות</div>
-      <h1 className="h2">יחידות דיור ברובעים</h1>
-      <p className="lead" style={{ margin: 0 }}>
-        ברובעים שבהם נקבע סף, מספר יחידות הדיור הנוספות מוגבל. הנתונים מתעדכנים לפי היתרים שניתנו.
-      </p>
+      <PageHead
+        href={PAGE.quarters.href}
+        kicker="לוח מכסות"
+        title="יחידות דיור ברובעים"
+        lead="ברובעים שבהם נקבע סף, מספר יחידות הדיור הנוספות מוגבל. הנתונים מתעדכנים לפי היתרים שניתנו."
+      >
+        <div className="row-gap">
+          <Link href={PAGE.program.href} className="btn small ghost">{PAGE.program.label} בכל רובע</Link>
+        </div>
+      </PageHead>
       {error && (
         <div className="state bad" role="alert">
           <b>לא ניתן לטעון את נתוני המכסות</b>
@@ -39,12 +47,12 @@ export default async function Page() {
               <article key={q.quarter} className="card raised stack" data-testid={`quota-${q.quarter}`}>
                 <div className="label">רובע {q.quarter}</div>
                 <div className="big num">
-                  {q.units_used == null ? "—" : fmt(used)} <span style={{ fontSize: 18 }} className="muted">/ {fmt(q.threshold as number)}</span>
+                  {q.units_used == null ? "—" : fmt(used)} <span style={{ fontSize: "var(--fs-l)" }} className="muted">/ {fmt(q.threshold as number)}</span>
                 </div>
                 <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={q.threshold as number} aria-valuenow={used} aria-label={`מימוש ברובע ${q.quarter}`}>
                   <i style={{ width: `${pct}%` }} />
                 </div>
-                <div className="muted" style={{ fontSize: 14 }}>
+                <div className="muted" style={{ fontSize: "var(--fs-s)" }}>
                   {q.units_used == null ? "טרם דווח מימוש" : `נותרו ${fmt(Math.max(0, (q.threshold as number) - used))} יח"ד`}
                   {q.units_in_process != null && ` · בהליך: ${fmt(q.units_in_process)}`}
                 </div>
@@ -55,7 +63,7 @@ export default async function Page() {
       )}
       {!error && data.length > 0 && (
         <div className="card" style={{ marginTop: 16 }}>
-          <div className="label" style={{ marginBottom: 8 }}>כל הרובעים</div>
+          <h2 className="h3" style={{ marginBottom: 8 }}>כל הרובעים</h2>
           <div className="table-wrap">
             <table className="table">
               <thead>

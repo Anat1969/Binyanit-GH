@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Prose } from "@/components/Prose";
 import { Reveal } from "@/components/Reveal";
+import { GROUPS, PAGE } from "@/content/site";
 import { PLAN } from "@/content/plan-meta";
 import { DISCLAIMER } from "@/engine/config";
 
@@ -30,14 +32,14 @@ export default function Home() {
             <div className="stack">
               <div className="label">תכנית {PLAN.number} · {PLAN.replaces}</div>
               <h1 className="display">התחדשות בניינית באשדוד</h1>
-              <p className="lead">
-                התכנית מאפשרת לחדש בניין בודד בשלושה מסלולים. כאן אפשר לבדוק מה הפוטנציאל התכנוני הראשוני של בניין
-                מסוים, לקרוא את מסמכי התכנית ולשאול שאלות על ההוראות.
-              </p>
+              <Prose
+                className="lead"
+                text="התכנית מאפשרת לחדש בניין בודד בשלושה מסלולים. כאן אפשר להבין את התכנית, לבדוק את הפוטנציאל התכנוני הראשוני של בניין מסוים, ולקרוא את המסמכים."
+              />
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 20 }}>
-                <Link href="/check" className="btn">בדיקת כתובת</Link>
-                <Link href={`/plan/${PLAN.number}`} className="btn ghost">התכנית במילים פשוטות</Link>
-                <Link href="/qa" className="btn ghost">שאלה על התכנית</Link>
+                <Link href={PAGE.check.href} className="btn">{PAGE.check.label}</Link>
+                <Link href={PAGE.story.href} className="btn ghost">{PAGE.story.label}</Link>
+                <Link href={PAGE.qa.href} className="btn ghost">{PAGE.qa.label}</Link>
               </div>
             </div>
           </Reveal>
@@ -77,7 +79,7 @@ export default function Home() {
                   <div className="label">מסלול {i + 1}</div>
                   <h3 className="h3">{r.title}</h3>
                   <div className="big">{r.m2}</div>
-                  <p className="muted" style={{ margin: 0 }}>{r.body}</p>
+                  <Prose className="muted" text={r.body} />
                 </article>
               </Reveal>
             ))}
@@ -88,7 +90,7 @@ export default function Home() {
       <section className="section">
         <div className="wrap grid grid-2">
           <div className="card stack">
-            <div className="label">איך זה עובד</div>
+            <div className="label">איך עובדת בדיקת כתובת</div>
             <ol style={{ margin: 0, paddingInlineStart: 20 }}>
               <li>מאתרים את הכתובת על המפה.</li>
               <li>המערכת בודקת את סיווג הרחוב והאזורים המיוחדים לפי התשריט.</li>
@@ -100,10 +102,30 @@ export default function Home() {
           <div className="card stack">
             <div className="label">חשוב לדעת</div>
             <p className="disclaimer" style={{ margin: 0 }}>{DISCLAIMER}</p>
-            <p className="muted" style={{ margin: 0 }}>
-              המספרים מחושבים במנוע כללים קבוע ובדוק. ההסברים והתשובות באתר נכתבו מראש מתוך הוראות התכנית, עם הפניה
-              לסעיפים, ואינם מחשבים זכויות לבניין מסוים.
-            </p>
+            <Prose
+              className="muted"
+              text="המספרים מחושבים במנוע כללים קבוע ובדוק. ההסברים והתשובות באתר נכתבו מראש מתוך הוראות התכנית, עם הפניה לסעיפים, ואינם מחשבים זכויות לבניין מסוים."
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="map-t">
+        <div className="wrap stack">
+          <div className="label">מפת האתר</div>
+          <h2 id="map-t" className="h2">מה יש באתר, לפי הסדר</h2>
+          <div className="site-map" style={{ marginTop: 20 }}>
+            {GROUPS.map((g, gi) => (
+              <section key={g.id} className="site-map-group" aria-label={g.label}>
+                <div className="label"><span className="num">{gi + 1}</span> · {g.label}</div>
+                {g.pages.map((p) => (
+                  <Link key={p.href} href={p.href} className="site-map-link">
+                    <b>{p.label}</b>
+                    <span className="muted">{p.blurb}</span>
+                  </Link>
+                ))}
+              </section>
+            ))}
           </div>
         </div>
       </section>

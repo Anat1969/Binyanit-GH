@@ -8,6 +8,9 @@ import {
   SEC,
 } from "@/engine/config";
 import { PLAN } from "@/content/plan-meta";
+import Link from "next/link";
+import { PageHead } from "@/components/PageHead";
+import { PAGE } from "@/content/site";
 import SheetClient from "./SheetClient";
 import "./sheet.css";
 
@@ -21,11 +24,12 @@ const d = DEMOLISH_ADD_FLOORS;
 export default function Page() {
   return (
     <div className="wrap section stack">
-      <div className="label">נספח עזר גרפי לתשריט</div>
-      <h1 className="h2">מפת התשריט בשכבות</h1>
-      <p className="lead" style={{ margin: 0 }}>
-        לחיצה על המפה מציגה אילו שכבות של התכנית חלות במקום, ומה המשמעות למבנה.
-      </p>
+      <PageHead
+        href={PAGE.sheet.href}
+        kicker="נספח עזר גרפי לתשריט"
+        title="מפת התשריט בשכבות"
+        lead="לחיצה על המפה מציגה אילו שכבות של התכנית חלות במקום, ומה המשמעות למבנה."
+      />
 
       <SheetClient />
 
@@ -86,6 +90,10 @@ export default function Page() {
         </section>
       </div>
 
+      <div className="row-gap">
+        <Link href={PAGE.check.href} className="btn small">{PAGE.check.label}</Link>
+        <Link href={PAGE.traffic.href} className="btn small ghost">{PAGE.traffic.label}</Link>
+      </div>
       <p className="muted sheet-small">
         בדיקה גרפית על בסיס הנספח בלבד. {DISCLAIMER}
       </p>
