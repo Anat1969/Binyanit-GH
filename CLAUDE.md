@@ -27,6 +27,11 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 - תכסית 60% ברחוב כלל עירוני, 70% ברחוב פעיל / ציר הסעת המונים.
 - גובה משוער: 3.3 מ' לקומה (תצוגה בלבד).
 
+## פריסה
+- Vercel: פרויקט binyanit-ashdod (prj_LQx5xXAWXKLTDlzCD1JHMqbdFl0S), אזור icn1 (ליד Supabase בסיאול). כתובת: https://binyanit-ashdod.vercel.app
+- קישור Git לפרויקט נכשל ב-500 מה-API, ולכן אין פריסה אוטומטית בדחיפה. פריסה: create_deployment עם gitSource {org: Anat1969, repo: Binyanit-GH, ref: הענף}.
+- אימות חי: Vercel sandbox עם curl (הסביבה בענן לא מגיעה ל-vercel.app).
+
 ## בדיקות
 - `npm test` – vitest (מנוע, אחזור, סיכום).
 - `npx next build && npx playwright test` – כל הכפתורים, דסקטופ ונייד, עם מוקים ל-API.

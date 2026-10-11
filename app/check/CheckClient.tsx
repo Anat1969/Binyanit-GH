@@ -257,7 +257,7 @@ export default function CheckClient() {
                   className="input"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="לדוגמה: שבטי ישראל 10"
+                  placeholder="לדוגמה: רוגוזין 20"
                   aria-label="כתובת"
                   name="address"
                 />
@@ -292,6 +292,7 @@ export default function CheckClient() {
             </ul>
           )}
           <MapView point={point} onPick={(lat, lon) => pick(lat, lon, null)} />
+          {point && <small className="muted">האיתור מדויק לרמת הרחוב. לדיוק אפשר ללחוץ על הבניין במפה.</small>}
           {!point && (
             <button type="button" className="btn ghost small" onClick={() => { setManualSite(true); setLookup({ state: "idle", data: null }); }}>
               המשך ללא כתובת
