@@ -5,7 +5,7 @@ import { useState } from "react";
 import { FAQ } from "@/content/faq";
 
 type Citation = { section: string; title: string; text: string };
-type Turn = { matched?: string; q: string; state: "loading" | "done" | "error"; kind?: "answer" | "refused" | "not_found"; answer?: string; citations?: Citation[]; mode?: string; corpus?: string };
+type Turn = { provider?: string | null; matched?: string; q: string; state: "loading" | "done" | "error"; kind?: "answer" | "refused" | "not_found"; answer?: string; citations?: Citation[]; mode?: string; corpus?: string };
 
 const EXAMPLES = FAQ.map((f) => f.q);
 
@@ -68,6 +68,11 @@ export default function QaClient() {
                   <div className="label" style={{ textTransform: "none" }}>תשובה מוכנה לשאלה: {t.matched}</div>
                 )}
                 {t.kind === "answer" && <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>{t.answer}</p>}
+                {t.mode === "llm" && (
+                  <small className="muted">
+                    ניסוח אוטומטי בשירות בינה מלאכותית{t.provider === "free" ? " חינמי" : ""}, מתוך הקטעים שלמטה בלבד. כל מספר בתשובה נבדק מול הקטעים.
+                  </small>
+                )}
                 {t.citations && t.citations.length > 0 && (
                   <div className="stack">
                     <div className="label">סעיפים</div>
@@ -88,6 +93,9 @@ export default function QaClient() {
         ))}
       </div>
 
+      <p className="muted" style={{ fontSize: 13, margin: 0 }}>
+        שאלה שאין לה תשובה מוכנה נשלחת לשירות בינה מלאכותית חיצוני לניסוח. אין להזין פרטים אישיים.
+      </p>
       <form
         className="card"
         style={{ display: "flex", gap: 8, alignItems: "flex-end", position: "sticky", bottom: 12 }}

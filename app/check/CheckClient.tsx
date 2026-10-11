@@ -21,6 +21,8 @@ type Lookup = {
   public_allocation_zone: boolean | null;
   urban_renewal_search_zone: boolean | null;
   well_radius: boolean | null;
+  special_guidelines?: boolean | null;
+  nearest_well_m?: number | null;
   quarter: string | null;
   quarter_quota: { threshold: number; used: number | null } | null;
 };
@@ -149,12 +151,14 @@ export default function CheckClient() {
   const has = (k: string) => Boolean(L?.loaded?.includes(k));
   const quarter = L?.quarter ?? (manual.quarter || null);
   const counter = counters.find((c) => c.quarter === quarter);
+  const sg = has("special_guidelines") ? Boolean(L?.special_guidelines) : null;
+  const zoneFromMap = (kind: string) => has(kind) || sg === false;
   const site: SiteContext = {
     inPlan: L?.in_plan ?? null,
     streetClass: (has("street_class") && L?.street_class) || manual.streetClass,
-    publicAllocationZone: has("public_allocation_zone") ? Boolean(L?.public_allocation_zone) : manual.publicZone,
-    urbanRenewalSearchZone: has("urban_renewal_search_zone") ? Boolean(L?.urban_renewal_search_zone) : manual.searchZone,
-    wellRadius: has("well_radius") ? Boolean(L?.well_radius) : manual.wellRadius,
+    publicAllocationZone: has("public_allocation_zone") ? Boolean(L?.public_allocation_zone) : sg === false ? false : manual.publicZone,
+    urbanRenewalSearchZone: has("urban_renewal_search_zone") ? Boolean(L?.urban_renewal_search_zone) : sg === false ? false : manual.searchZone,
+    wellRadius: has("well_radius") || has("building_restriction") ? Boolean(L?.well_radius) : manual.wellRadius,
     quarter,
     quarterQuota: L?.quarter_quota ?? (counter?.threshold != null ? { threshold: counter.threshold, used: counter.units_used } : null),
   };
@@ -360,12 +364,12 @@ export default function CheckClient() {
                 [
                   ["public_allocation_zone", "הנחיות מיוחדות (הקצאה לציבור)", "publicZone", site.publicAllocationZone],
                   ["urban_renewal_search_zone", "הנחיות מיוחדות ב׳ (חיפוש התחדשות)", "searchZone", site.urbanRenewalSearchZone],
-                  ["well_radius", "רדיוס מגן קידוח", "wellRadius", site.wellRadius],
+                  ["well_radius", "רדיוס מגן קידוח (גבול מגבלות בנייה)", "wellRadius", site.wellRadius],
                 ] as const
               ).map(([kind, label, key, val]) => (
                 <div className="site-row" key={kind}>
                   <span className="k">{label}</span>
-                  {has(kind) ? (
+                  {(kind === "well_radius" ? has("well_radius") || has("building_restriction") : zoneFromMap(kind)) ? (
                     <SiteValue loaded>{val ? "כן" : "לא"}</SiteValue>
                   ) : (
                     <SiteValue loaded={false}>
@@ -377,6 +381,18 @@ export default function CheckClient() {
                   )}
                 </div>
               ))}
+              {sg && (
+                <div className="state warn" data-testid="special-guidelines">
+                  <b>המגרש בתחום "הנחיות מיוחדות" לפי התשריט</b>
+                  התשריט אינו מבחין בין הקצאה לצרכי ציבור לבין הנחיות מיוחדות ב׳. יש לבדוק בהוראות איזו הנחיה חלה ולסמן למעלה.
+                </div>
+              )}
+              {L?.nearest_well_m != null && (
+                <div className="site-row">
+                  <span className="k">אתר קידוח קרוב</span>
+                  <span className="num">{L.nearest_well_m.toLocaleString("he-IL")} מ׳</span>
+                </div>
+              )}
               <div className="site-row">
                 <span className="k">רובע</span>
                 {L?.quarter ? (

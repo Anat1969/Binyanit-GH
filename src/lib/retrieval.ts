@@ -1,5 +1,6 @@
 import { FAQ, type FaqItem } from "@/content/faq";
 import { PLAN_SECTIONS, type PlanSection } from "@/content/plan-sections";
+import type { PlanTextRow } from "./data";
 
 const PREFIXES = ["וה", "שה", "וב", "ול", "ומ", "כש", "מה", "בה", "לה", "ה", "ו", "ב", "ל", "מ", "ש", "כ"];
 const STOP = new Set(["של", "את", "על", "עם", "או", "גם", "זה", "זו", "מה", "איך", "האם", "אם", "כל", "יש", "אין", "לא", "כן", "הוא", "היא", "אני", "אתה", "לי", "כמה"]);
@@ -73,6 +74,14 @@ export interface Hit {
 
 export function retrieve(query: string, k = 4): Hit[] {
   return search(SECTION_INDEX, query, k).map((h) => ({ section: h.doc, score: h.score }));
+}
+
+/** BM25 over the verbatim plan text rows (built per call; the text changes rarely and is small). */
+export function retrieveRows(rows: PlanTextRow[], query: string, k = 5): PlanTextRow[] {
+  const usable = rows.filter((r) => r.body.length > 20);
+  if (!usable.length) return [];
+  const index = buildIndex(usable, (r) => `${r.section ?? ""} ${r.title ?? ""} ${r.body}`);
+  return search(index, query, k).filter((h) => h.score > 1.5).map((h) => h.doc);
 }
 
 export const FAQ_MIN_SCORE = 3;

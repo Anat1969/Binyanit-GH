@@ -53,13 +53,13 @@ export default function Home() {
               </div>
               <div>
                 <div className="label">מועד אישור</div>
-                <div className="v">{PLAN.approvalDate ?? "2026"}</div>
-                <small className="muted">{PLAN.approvalDate ? "" : "תאריך הפרסום ברשומות יוזן לאחר אימות"}</small>
+                <div className="v num">{PLAN.approvalDate}</div>
+                <small className="muted">פרסום ברשומות</small>
               </div>
               <div>
                 <div className="label">תוקף</div>
                 <div className="v">{PLAN.validityYears} שנים</div>
-                <small className="muted">מיום תחילת התוקף</small>
+                <small className="muted">עד {PLAN.validUntil}</small>
               </div>
             </div>
           </Reveal>

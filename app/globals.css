@@ -224,3 +224,16 @@ h1, h2, h3 { margin: 0; font-weight: 300; letter-spacing: -0.01em; }
 .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
 .fact-v { font-size: 34px; font-weight: 200; line-height: 1.05; }
 .fact-u { font-size: 13px; color: var(--muted); }
+
+/* Plan text -------------------------------------------------------------- */
+.pt-body { font-weight: 300; font-size: 16px; line-height: 1.9; max-height: 75vh; overflow-y: auto; padding-inline-end: 6px; border-top: 1px solid var(--line); padding-top: 8px; }
+.pt-source { margin: 18px 0 6px; }
+.pt-h { font-weight: 600; font-size: 18px; margin: 18px 0 4px; color: var(--ink); line-height: 1.5; }
+.pt-p { margin: 0 0 8px; color: var(--ink); }
+.pt-item { padding-inline-start: 16px; }
+.pt-ref { font-family: var(--mono); font-size: 13px; font-weight: 500; background: var(--accent-soft); color: var(--accent); border-radius: 6px; padding: 1px 7px; margin-inline-end: 8px; white-space: nowrap; }
+.plan-text mark { background: none; color: inherit; }
+.plan-text mark.pt-num { font-family: var(--mono); font-weight: 600; color: var(--accent); }
+.plan-text mark.pt-ref { margin: 0; padding: 0 4px; }
+.plan-text mark.pt-param { font-weight: 500; }
+.plan-text mark.pt-hit { background: #f2e3b3; color: var(--ink); font-weight: 500; border-radius: 3px; padding: 0 2px; }

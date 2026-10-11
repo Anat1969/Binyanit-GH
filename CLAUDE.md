@@ -6,7 +6,11 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 ## כללי עבודה קבועים (מתיקונים של ענת)
 - לכל אפליקציה: אייקון אפליקציה מעוצב (app/icon.svg, app/apple-icon.png, public/icon-192.png, public/icon-512.png, app/manifest.ts). האייקון כאן: חתך בניין, קומות קיימות באפור, קומות נוספות בלבן וקומת גג חלקית. ה"ללא אייקונים" חל על הממשק, לא על אייקון האפליקציה.
 - בלי תלות במפתח API בתשלום. תוכן הסבר ותשובות נכתב מראש (src/content/plan-story.ts, src/content/faq.ts) עם הפניה לסעיפים, כמו באתר "מה נבנה סביבי". ANTHROPIC_API_KEY הוא תוספת אופציונלית בלבד.
-- שליחת תוכן לשירותי AI חינמיים לא מאומתים (כמו Pollinations) נחסמה בסביבה. לא לחזור לכיוון הזה.
+- AI לניסוח תשובות: ענת ביקשה במפורש API חינמי. סדר: ANTHROPIC_API_KEY, אחר כך GEMINI_API_KEY (חינמי עם מפתח), אחרת Pollinations בלי מפתח (private). כל תשובה עוברת groundedAnswer: כל מספר חייב להופיע בקטעים, וחייבת הפניה לסעיף. אחרת מוצגים הקטעים עצמם. FREE_LLM_DISABLED=1 מכבה.
+- עריכה באתר: קוד עריכה (hash בטבלה binyanit_admin_secret, הקוד עצמו לא בריפו). העלאות ל-Vercel Blob (store binyanit-docs). מחיקה רכה בלבד.
+- שכבות התשריט: ייבוא ממינהל התכנון (Xplan, ags.iplan.gov.il) דרך כפתור בדף המסמכים או POST /api/admin/import-xplan. "הנחיות מיוחדות" בתשריט אינן מבחינות בין הקצאה לציבור להנחיות ב׳, ולכן בתוך הפוליגון הבחירה ידנית. "גבול מגבלות בניה" משמש כרדיוס מגן קידוח (הסקה, לאמת).
+- הוראות התכנית מילה במילה: טבלה binyanit_plan_text, נטענת ב-POST /api/admin/plan-text אחרי המרת ה-PDF ובדיקה ידנית. מוצגת עם חיפוש בדף השאלות.
+- מבא"ת חוסם גישה אוטומטית למסמכים. לא לעקוף; המסמכים מגיעים מהעלאה של ענת.
 
 ## עיקרון־על
 - כל מספר מחושב רק ב-`src/engine` (מנוע כללים דטרמיניסטי עם בדיקות). ה-LLM רק מסביר ועונה מתוך הוראות התכנית, עם סעיפים.
@@ -18,7 +22,7 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 - `src/content/plan-story.ts` – דף התכנית במילים פשוטות (/plan/603-0972307), בפורמט של ashdod-ma-nivne: פרקים, עובדות עם רמת ודאות, מקורות.
 - `src/content/faq.ts` – מאגר תשובות מוכנות לשאלות נפוצות. הסוכן מחפש בו לפני הצגת סעיפים.
 - `src/content/plan-sections.ts` – קורפוס הסוכן. כרגע נוסח עבודה מתוך תקציר הכללים; להחליף בנוסח המאושר.
-- `src/content/plan-meta.ts` – פרטי התכנית. `approvalDate` ריק עד אימות ברשומות.
+- `src/content/plan-meta.ts` – פרטי התכנית לפי Xplan: פרסום ברשומות 31.5.2026, תוקף עד 31.5.2031. קוד כמות 120 פורש כיח"ד (22,565 מאושרות, 13,627 תוספת).
 - `app/api/*` – geocode (Nominatim), lookup (PostGIS RPC), layers, qa, explain, checks, quarters, status.
 - `scripts/import-kml.mjs` – המרת KML/GeoJSON מהתשריט ל-SQL עבור `binyanit_layers`.
 
@@ -45,5 +49,4 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 
 ## שלב 2
 - משיכה אוטומטית של נתוני בניין.
-- טעינת שכבות התשריט (גבול, סיווג רחובות, אזורים מיוחדים, קידוחים, רובעים).
-- העלאת מסמכי התכנית לטבלה `binyanit_plan_documents`.
+- שכבת רובעים אמיתית (ב-ASHDODMAP הרובעים סכמטיים, לא לשימוש).

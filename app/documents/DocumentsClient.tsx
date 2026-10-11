@@ -29,7 +29,7 @@ export default function DocumentsClient({ docs, error }: { docs: PlanDocument[];
       {docs.length === 0 && (
         <div className="state info" data-testid="docs-empty">
           <b>המסמכים טרם הועלו</b>
-          הוראות התכנית, התשריט ונספח הבינוי יועלו לכאן לאחר פרסום התכנית לתוקף.
+          הוראות התכנית, התשריט ונספח הבינוי יועלו לכאן בקרוב.
         </div>
       )}
       {docs.length > 0 && shown.length === 0 && <div className="state info">אין מסמכים בקטגוריה זו.</div>}

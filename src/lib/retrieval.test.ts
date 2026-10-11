@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { FAQ } from "@/content/faq";
-import { asksForComputation, matchFaq, normalize, retrieve, sectionsById } from "./retrieval";
+import { asksForComputation, matchFaq, normalize, retrieve, retrieveRows, sectionsById } from "./retrieval";
 
 describe("retrieval", () => {
   it("strips Hebrew prefixes and final letters", () => {
@@ -55,5 +55,21 @@ describe("pre-written answers", () => {
       expect(f.a).toMatch(/\(|סעיף|טבלה/);
       expect(sectionsById(f.sections)).toHaveLength(f.sections.length);
     }
+  });
+});
+
+describe("verbatim plan text retrieval", () => {
+  const row = (id: number, body: string, section: string | null = null) => ({ id, ord: id, kind: "para" as const, section, title: null, body, page: 1, source: "הוראות התכנית" });
+  const rows = [
+    row(1, "בקומת הקרקע תותר הקצאה של שטח לצרכי ציבור בהיקף של 30 אחוז משטח הקומה", "4.1.2ה"),
+    row(2, "גובה הבניין לא יעלה על מספר הקומות המרבי הקבוע בטבלה 5", "5"),
+    row(3, "קצר"),
+  ];
+  it("finds the matching paragraph", () => {
+    expect(retrieveRows(rows, "הקצאה לצרכי ציבור בקומת הקרקע")[0].id).toBe(1);
+  });
+  it("ignores unrelated questions and very short rows", () => {
+    expect(retrieveRows(rows, "מזג אוויר")).toHaveLength(0);
+    expect(retrieveRows([row(3, "קצר")], "קצר")).toHaveLength(0);
   });
 });

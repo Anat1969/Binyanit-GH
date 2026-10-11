@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getDocuments } from "@/lib/data";
+import AdminPanel from "./AdminPanel";
 import DocumentsClient from "./DocumentsClient";
 
 export const metadata: Metadata = { title: "מסמכי התכנית | התחדשות בניינית אשדוד" };
@@ -15,6 +16,7 @@ export default async function Page() {
         כל מסמך מסווג לפי מעמדו: מסמך מחייב, רקע, היסטורי או בעל השפעה עקיפה. רק מסמכים מחייבים קובעים זכויות.
       </p>
       <DocumentsClient docs={data} error={error} />
+      <AdminPanel />
     </div>
   );
 }

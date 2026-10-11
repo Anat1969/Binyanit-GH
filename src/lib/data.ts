@@ -47,3 +47,35 @@ export async function getQuarters(): Promise<{ data: QuarterCounter[]; error: bo
     return { data: [], error: true };
   }
 }
+
+export interface PlanTextRow {
+  id: number;
+  ord: number;
+  kind: "heading" | "para" | "item" | "table";
+  section: string | null;
+  title: string | null;
+  body: string;
+  page: number | null;
+  source: string;
+}
+
+export async function getPlanText(): Promise<{ data: PlanTextRow[]; error: boolean }> {
+  try {
+    const all: PlanTextRow[] = [];
+    // Paged read: PostgREST returns at most 1000 rows per request.
+    for (let from = 0; from < 20000; from += 1000) {
+      const { data, error } = await supabase()
+        .from("binyanit_plan_text")
+        .select("id, ord, kind, section, title, body, page, source")
+        .order("source")
+        .order("ord")
+        .range(from, from + 999);
+      if (error) return { data: all, error: true };
+      all.push(...((data as PlanTextRow[]) ?? []));
+      if (!data || data.length < 1000) break;
+    }
+    return { data: all, error: false };
+  } catch {
+    return { data: [], error: true };
+  }
+}

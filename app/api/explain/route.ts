@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { complete, llmAvailable } from "@/lib/llm";
+import { complete, groundedAnswer, llmAvailable } from "@/lib/llm";
 
 const SYSTEM = `אתה מסביר לתושבים תוצאה של מנוע כללים לתכנית התחדשות בניינית 603-0972307 באשדוד.
 כללים מחייבים:
@@ -9,12 +9,18 @@ const SYSTEM = `אתה מסביר לתושבים תוצאה של מנוע כלל
 4. עברית תקינה, ללא כותרות, ללא אייקונים, עד 8 משפטים.
 5. סיים במשפט: "זהו פוטנציאל תכנוני ראשוני בלבד, לא זכויות מוקנות, וכפוף לשיקול דעת הוועדה המקומית (7.2.1, 6.1.3)."`;
 
+export const maxDuration = 40;
+
 export async function POST(req: Request) {
   if (!llmAvailable()) return NextResponse.json({ available: false });
   try {
-    const report = await req.json();
-    const text = await complete(SYSTEM, `<engine_output>${JSON.stringify(report).slice(0, 20000)}</engine_output>`);
-    return NextResponse.json({ available: true, text });
+    const report = JSON.stringify(await req.json()).slice(0, 20000);
+    const out = await complete(SYSTEM, `<engine_output>${report}</engine_output>`);
+    // Reject explanations that introduce numbers the engine did not produce.
+    if (!out || !groundedAnswer(out.text, report, "", ["7.2.1", "4.1.2", "טבלה 5"])) {
+      return NextResponse.json({ available: true, error: "ההסבר אינו זמין כרגע" }, { status: 502 });
+    }
+    return NextResponse.json({ available: true, text: out.text, provider: out.provider });
   } catch {
     return NextResponse.json({ available: true, error: "ההסבר אינו זמין כרגע" }, { status: 502 });
   }
