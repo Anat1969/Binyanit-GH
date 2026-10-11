@@ -183,6 +183,21 @@ describe("Retrofit + protection (4.1.2)", () => {
     expect(r.eligible).toBe(false);
   });
 
+  it("retrofit status is derived from the permit year, not chosen", () => {
+    const old = computePotential(building({ retrofitNeeded: undefined, permitYear: 1972 }), site());
+    expect(old.routes[1].eligible).toBe(true);
+    expect(old.input.retrofitNeeded).toBe(true);
+    const newer = computePotential(building({ retrofitNeeded: true, permitYear: 1985 }), site());
+    expect(newer.routes[1].eligible).toBe(false);
+    expect(newer.routes[1].blockers[0].text).toContain("1985");
+    expect(computePotential(building({ permitYear: 1980 }), site()).routes[1].eligible).toBe(false);
+  });
+
+  it("requires a permit year or an explicit retrofit status", () => {
+    expect(validateInput(building({ retrofitNeeded: undefined }))).toContain("יש להזין את שנת היתר הבנייה");
+    expect(validateInput(building({ permitYear: 85 })).length).toBe(1);
+  });
+
   it("non-residential: +2 floors, no per-unit addition", () => {
     const r = computeRetrofit(building({ residential: false, existingUnits: 0 }), site());
     expect(r.addedFullFloors).toBe(2);
