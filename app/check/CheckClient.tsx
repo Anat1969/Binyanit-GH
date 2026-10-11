@@ -1,5 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { InputError, computePotential, type BuildingInput, type PotentialReport, type SiteContext, type StreetClass } from "@/engine";
 import { QUARTERS, STREET_CLASS_LABEL } from "@/content/plan-meta";
@@ -357,6 +358,7 @@ export default function CheckClient() {
                         <option key={k} value={k}>{v}</option>
                       ))}
                     </select>
+                    <Link href="/traffic" target="_blank" className="src-link">מפת הרחובות בנספח התנועה</Link>
                   </SiteValue>
                 )}
               </div>

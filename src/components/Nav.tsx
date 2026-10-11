@@ -6,6 +6,7 @@ const LINKS = [
   { href: "/", label: "ראשי" },
   { href: "/plan/603-0972307", label: "התכנית" },
   { href: "/check", label: "בדיקת כתובת" },
+  { href: "/traffic", label: "רחובות ותנועה" },
   { href: "/program", label: "צורכי ציבור" },
   { href: "/documents", label: "מסמכים" },
   { href: "/qa", label: "שאלות על התכנית" },

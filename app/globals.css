@@ -339,3 +339,43 @@ h1, h2, h3 { margin: 0; font-weight: 300; letter-spacing: -0.01em; }
 .docs-list li { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 .crumbs a:not(.btn) { color: var(--accent); }
 .approx b { display: inline; margin-inline-end: 6px; }
+
+/* Traffic appendix (/traffic) --------------------------------------------- */
+.tmap { display: grid; grid-template-columns: minmax(0, 1fr) 340px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-2); background: var(--surface); height: min(78vh, 820px); min-height: 520px; }
+.tmap-stage { position: relative; min-width: 0; background: #fff; color-scheme: light; }
+.tmap-svg { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; max-width: none; }
+.tmap-svg.drag { cursor: grabbing; }
+.tmap-svg text { font-family: var(--mono); fill: #3a423e; paint-order: stroke; stroke: #fff; stroke-width: 0.35; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.tmap-svg:not(.z-block) .lbl-block, .tmap-svg:not(.z-parcel) .lbl-parcel { display: none; }
+.tmap-svg .bgline { opacity: var(--bg-op, 0.6); }
+.tmap-svg .hit { animation: tmap-pulse 1.6s ease-out 2; }
+@keyframes tmap-pulse { from { stroke-opacity: 1; } to { stroke-opacity: 0; } }
+.tmap-overlay { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255, 255, 255, 0.8); color: #3f4247; font-size: 15px; }
+.tmap-tools { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.tmap-tools button { min-width: 40px; height: 40px; padding: 0 10px; border-radius: 10px; border: 1px solid #b9b9b3; background: #fff; color: #17181a; font-size: 17px; cursor: pointer; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+.tmap-tools button.wide { font-size: 13px; }
+.tmap-hud { position: absolute; bottom: 12px; left: 12px; display: flex; align-items: flex-end; gap: 14px; background: rgba(255, 255, 255, 0.9); border: 1px solid #d8d8d3; border-radius: 10px; padding: 8px 12px; font-size: 11px; color: #17181a; }
+.tmap-north { width: 30px; height: 30px; color: #17181a; }
+.tmap-bar { height: 6px; border: 1px solid #17181a; border-top: 0; margin-top: 4px; }
+.tmap-legend { border-inline-start: 1px solid var(--line); background: var(--surface-2); overflow-y: auto; padding: 10px 10px 16px; min-height: 0; }
+.tmap-group + .tmap-group { margin-top: 14px; }
+.tmap-group-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 13px; font-weight: 500; color: var(--ink-2); padding: 0 6px 4px; }
+.linklike { background: none; border: 0; padding: 2px 4px; font-size: 12px; color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.tmap-row { display: flex; align-items: center; gap: 6px; border-radius: 8px; padding: 2px 6px; }
+.tmap-row:hover { background: var(--surface); }
+.tmap-row label { display: grid; grid-template-columns: 18px 58px minmax(0, 1fr); align-items: center; gap: 8px; flex: 1; min-width: 0; padding: 6px 0; cursor: pointer; min-height: 40px; }
+.tmap-row input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+.tmap-sw { width: 58px; height: 16px; display: block; background: #fff; border-radius: 3px; }
+.tmap-name { font-size: 14px; line-height: 1.35; }
+.tmap-name small { display: block; color: var(--muted); font-size: 12px; }
+.tmap-row.off .tmap-sw, .tmap-row.off .tmap-name { opacity: 0.4; }
+.tmap-solo { flex: 0 0 auto; background: none; border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px 10px; min-height: 30px; font-size: 12px; color: var(--ink-2); cursor: pointer; }
+.tmap-solo:hover { border-color: var(--ink); color: var(--ink); }
+.tmap-ctrl { display: grid; gap: 14px; border-top: 1px solid var(--line); margin-top: 16px; padding: 14px 6px 0; }
+.tmap-ctrl input[type="range"] { width: 100%; accent-color: var(--accent); }
+.tmap-ctrl .field > label { font-size: 14px; color: var(--ink-2); }
+@media (max-width: 899px) {
+  .tmap { grid-template-columns: 1fr; height: auto; min-height: 0; }
+  .tmap-stage { height: min(62vh, calc(64vw + 170px)); min-height: 340px; }
+  .tmap-legend { border-inline-start: 0; border-top: 1px solid var(--line); }
+}

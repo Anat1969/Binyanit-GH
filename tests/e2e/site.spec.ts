@@ -51,6 +51,7 @@ test("home: facts, CTAs and navigation", async ({ page }) => {
     ["התכנית", "/plan/603-0972307"],
     ["מסמכים", "/documents"],
     ["מכסות ברובעים", "/quarters"],
+    ["רחובות ותנועה", "/traffic"],
     ["שאלות על התכנית", "/qa"],
     ["בדיקת כתובת", "/check"],
     ["ראשי", "/"],
