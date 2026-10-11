@@ -31,6 +31,14 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 - מקור: `src/content/plan-provisions.ts`. פרק 1 מ-plan-meta (Xplan). סעיפים מילה במילה מ-binyanit_plan_text לפי מספר סעיף; כשאין נוסח מאושר בפרק מוצג נוסח העבודה מ-plan-sections.ts עם תווית "נוסח עבודה".
 - "התכנית" בתפריט שונה ל"התכנית בקצרה" כדי להבדיל מ"תכנית".
 
+## בדיקת כתובת (/check)
+- מפת רקע: OpenFreeMap positron (חינמי, בלי מפתח), נפילה לאריחי OSM. תצלום אוויר: Esri World Imagery. CARTO דורש עכשיו מפתח, לא להשתמש.
+- רובע תמיד משויך: מהתשריט, אחרת מ-OSM (suburb בתוצאת Nominatim), אחרת פוליגון ב-rovaim.geojson או הקרוב ביותר (src/lib/quarter.ts). אין "רובע לא ידוע".
+- טעון חיזוק אינו בחירה: נגזר משנת ההיתר (לפני 1.1.1980, כמו תמ"א 38, לאימות מול ההגדרות). RETROFIT_PERMIT_BEFORE_YEAR ב-config.
+- מילוי אוטומטי: PDF נקרא בדפדפן (pdfjs-dist, worker ב-public/pdf.worker.min.mjs, גרסה נעוצה), חילוץ דטרמיניסטי ב-src/lib/extract.ts עם ציטוט. מסמך סרוק: הזנה ידנית.
+- 3 דוגמאות מסומנות כדוגמה במסך וב-PDF.
+- PDF: שבירת עמודים רק בין בלוקים (h3/p/tr/li/.pdf-block), שוליים 10 מ"מ. רשימות עם סמן כתוב, לא list-style (html2canvas שובר אותו ב-RTL).
+
 ## עמוד צורכי ציבור (/program, /program/[id])
 - מקור אמת: `src/data/program.json` (נספח הפרוגרמה, 30.6.2025). כל מספר במסך ממופה לשדה; אין חישובים מלבד חיפוש ערכי קבוצה (י'+י"א+י"ג). אפיון: `docs/PROGRAM_SPEC.md`.
 - PDF: `public/docs/program-appendix.pdf`, קישורי מקור `#page=N` (עמ' 3 מתודולוגיה, 4 קיבולת, 5 כיתות לא מנוצלות, 6-13 רובעים, 14 חינוך, 15 קהילה, 16 כושר נשיאה).
