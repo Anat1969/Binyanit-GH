@@ -34,7 +34,12 @@ test("program: KPIs, map modes, legend, approximate banner", async ({ page }) =>
     await expect(modes.getByRole("button", { name: m })).toHaveAttribute("aria-pressed", "true");
     if (m === "שנת הקמה") await expect(page.getByTestId("era-empty")).toBeVisible();
   }
-  await expect(page.locator(".legend").first()).toContainText("כושר נשיאה חיובי עם יתרה");
+  await expect(page.getByTestId("map-legend")).toContainText("כושר נשיאה חיובי עם יתרה");
+  await expect(page.getByTestId("map-legend")).toContainText("גבול רובע");
+  if ((await page.getByTestId("program-map").getAttribute("data-state")) === "ready") {
+    await expect(page.locator(".pmap-label")).toHaveCount(14);
+    await expect(page.locator('.pmap-label[data-rova="g"]')).toContainText("גירעון 31 כיתות");
+  }
   await noHorizontalScroll(page);
   expect(errors).toEqual([]);
 });
@@ -95,7 +100,11 @@ test("program: comparison table sorts every column, filter, search, CSV", async 
 test("program: education, unused classes and community tables sort; totals from source", async ({ page }) => {
   const errors = await setup(page);
   await page.goto("/program");
+  const tabs = page.getByRole("tablist", { name: "נושא" });
+  const tabOf: Record<string, string> = { "edu-table": "צורכי חינוך", "unused-table": "כיתות לא מנוצלות", "com-table": "קהילה, בריאות ודת" };
   for (const id of ["edu-table", "unused-table", "com-table"]) {
+    await tabs.getByRole("tab", { name: tabOf[id] }).click();
+    await expect(tabs.getByRole("tab", { name: tabOf[id] })).toHaveAttribute("aria-selected", "true");
     const t = page.getByTestId(id);
     const hs = t.locator("thead .sort-btn");
     const n = await hs.count();
@@ -104,8 +113,10 @@ test("program: education, unused classes and community tables sort; totals from 
       await expect(hs.nth(i)).toHaveAttribute("data-sort", "asc");
     }
   }
-  await expect(page.getByTestId("edu-table").locator("tfoot")).toContainText("462");
   await expect(page.getByTestId("com-table").locator("tfoot")).toContainText("3,436");
+  await tabs.getByRole("tab", { name: "צורכי חינוך" }).click();
+  await expect(page.getByTestId("edu-table").locator("tfoot")).toContainText("462");
+  await tabs.getByRole("tab", { name: "סיכום ומסמכים" }).click();
   await expect(page.getByTestId("program-summary")).toContainText("מקווה נשים");
   expect(errors).toEqual([]);
 });
@@ -113,6 +124,9 @@ test("program: education, unused classes and community tables sort; totals from 
 test("program: documents open in a new tab; source links point to the right PDF page", async ({ page, request }) => {
   await setup(page);
   await page.goto("/program");
+  const srcCount = await page.locator("a.src-link").count();
+  expect(srcCount).toBeGreaterThan(10);
+  await page.getByRole("tab", { name: "סיכום ומסמכים" }).click();
   const docs = page.getByTestId("program-docs");
   const open = docs.getByRole("link", { name: "פתיחה" });
   await expect(open).toHaveCount(3);
@@ -126,7 +140,7 @@ test("program: documents open in a new tab; source links point to the right PDF 
   }
   const links = page.locator("a.src-link");
   const hrefs = await links.evaluateAll((els) => els.map((e) => e.getAttribute("href")));
-  expect(hrefs.length).toBeGreaterThan(10);
+  expect(hrefs.length).toBeGreaterThan(5);
   for (const h of hrefs) expect(h).toMatch(/^\/docs\/program-appendix\.pdf#page=(1|3|4|5|14|15|16)$/);
   await expect(page.locator('a.src-link[data-page="16"]').first()).toHaveAttribute("target", "_blank");
 });
@@ -143,6 +157,7 @@ test("rova page: capacity card, flags verbatim, tables sortable, prev/next", asy
   const flags = page.getByTestId("data-flags");
   await expect(flags).toContainText("פערים בנתוני המקור");
   for (const f of g.data_flags) await expect(flags).toContainText(f);
+  await page.getByRole("tab", { name: "חינוך: דרישה ובתי ספר" }).click();
   await expect(page.getByTestId("demand-table")).toContainText("חרדי בנים");
   await expect(page.locator('a.src-link[data-page="8"]').first()).toHaveAttribute("href", "/docs/program-appendix.pdf#page=8");
 
@@ -164,7 +179,10 @@ test("rova pages: every rova renders; group block, low-addition empty state, sli
   for (const r of program.rovaim as { id: string; name: string; added_max_5y: number; group?: string }[]) {
     await page.goto(`/program/${r.id}`);
     await expect(page.locator("h1")).toHaveText(r.name);
-    if (r.group) await expect(page.getByTestId("group-block")).toContainText("רובעים י' + י\"א + י\"ג");
+    if (r.group) {
+      await page.getByRole("tab", { name: /^קבוצת / }).click();
+      await expect(page.getByTestId("group-block")).toContainText("רובעים י' + י\"א + י\"ג");
+    }
     if (r.added_max_5y < 50) await expect(page.getByTestId("low-empty")).toBeVisible();
     if (slide[r.id]) await expect(page.getByRole("link", { name: `פתח בעמוד ${slide[r.id]} של הנספח` })).toHaveAttribute("href", `/docs/program-appendix.pdf#page=${slide[r.id]}`);
     await noHorizontalScroll(page);
