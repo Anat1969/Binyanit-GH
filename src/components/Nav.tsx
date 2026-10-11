@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/provisions", label: "תכנית" },
   { href: "/check", label: "בדיקת כתובת" },
   { href: "/traffic", label: "רחובות ותנועה" },
+  { href: "/sheet", label: "מפת התשריט" },
   { href: "/program", label: "צורכי ציבור" },
   { href: "/documents", label: "מסמכים" },
   { href: "/qa", label: "שאלות על התכנית" },
