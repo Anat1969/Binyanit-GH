@@ -1,0 +1,88 @@
+/* Plan sheet page. Layer colours follow the printed appendix. */
+.tashrit {
+  --l-boundary: #0040ff;
+  --l-active: #8a00b8;
+  --l-metro: #d629ba;
+  --l-traffic: #ff0000;
+  --l-public: #addef7;
+  --l-renewal: #ddbad9;
+  --sheet-filter: none;
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  .tashrit { --sheet-filter: invert(1) hue-rotate(180deg) brightness(0.85); }
+}
+
+.sheet-panel { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.sheet-layers { list-style: none; margin: 0; padding: 0; }
+.sheet-layers li {
+  display: grid; grid-template-columns: auto 34px 1fr auto; align-items: center; gap: 10px;
+  padding: 8px 2px; border-bottom: 1px solid var(--line);
+}
+.sheet-layers li:last-child { border-bottom: 0; }
+.sheet-layers label { cursor: pointer; font-weight: 500; line-height: 1.3; font-size: 15px; }
+.sheet-layers small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; }
+.sheet-layers input[type="checkbox"] { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+.sheet-layers .off label { color: var(--muted); }
+.sheet-layers .n { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.sheet-layers .pending { opacity: 0.75; }
+.sheet-layers .pending label { cursor: default; }
+.sheet-layers .tag {
+  font-size: 11.5px; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--ink-2); white-space: nowrap;
+}
+.tashrit .sw { width: 34px; height: 14px; border-radius: 2px; }
+.tashrit .sw.line { height: 5px; }
+.tashrit .sw.hatch { background: repeating-linear-gradient(135deg, var(--l-renewal) 0 2px, transparent 2px 5px); outline: 1px solid var(--l-renewal); }
+.tashrit .pending .sw { background: repeating-linear-gradient(90deg, var(--muted) 0 4px, transparent 4px 7px); height: 3px; }
+
+.sheet-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.sheet-row input[type="range"] { width: 120px; accent-color: var(--accent); }
+.tchip {
+  font: inherit; font-size: 14px; min-height: 36px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); cursor: pointer;
+}
+.tchip:hover { border-color: var(--ink); }
+.tchip[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+.sheet-probe { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: 14px 16px; }
+.sheet-probe h3 { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
+.sheet-probe p { margin: 0; font-size: 14.5px; }
+.sheet-probe ul { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; }
+.sheet-probe .sheet-small { margin-top: 8px; }
+
+.sheet-map {
+  position: relative; min-height: 0; height: min(78vh, 820px);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+  touch-action: none;
+}
+.sheet-map svg { width: 100%; height: 100%; display: block; cursor: grab; user-select: none; }
+.sheet-map svg.drag { cursor: grabbing; }
+.sheet-map svg:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.sheet-map image { filter: var(--sheet-filter); }
+.sheet-map .zone-hit { fill: transparent; cursor: pointer; }
+.sheet-map .zone-hit:hover, .sheet-map .zone-hit.sel {
+  fill: var(--l-renewal); fill-opacity: 0.35; stroke: var(--l-active); stroke-width: 1.2; vector-effect: non-scaling-stroke;
+}
+.sheet-zoom { position: absolute; inset-inline-start: 10px; top: 10px; display: flex; flex-direction: column; gap: 4px; }
+.sheet-zoom .tchip { min-width: 40px; min-height: 40px; padding: 0 8px; font-family: var(--mono); }
+.sheet-scale {
+  position: absolute; inset-inline-end: 10px; bottom: 10px; font-size: 12px; color: var(--muted);
+  background: var(--note-bg); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line);
+}
+.sheet-loading, .sheet-map > .state { position: absolute; inset-inline: 16px; top: 16px; z-index: 2; }
+
+.sheet-list { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 4px; }
+.sheet-small { font-size: 13.5px; margin: 0; }
+.sheet-tbl { overflow-x: auto; }
+.sheet-tbl table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.sheet-tbl th, .sheet-tbl td { text-align: start; padding: 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.sheet-tbl th { font-weight: 500; color: var(--muted); font-size: 12.5px; }
+.sheet-tbl td.num { white-space: nowrap; }
+
+@media (max-width: 860px) {
+  .tashrit { grid-template-columns: 1fr; }
+  .sheet-map { order: -1; height: 70vh; }
+}
