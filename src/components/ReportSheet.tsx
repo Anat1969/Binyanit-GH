@@ -1,14 +1,28 @@
 import { forwardRef } from "react";
 import type { PotentialReport } from "@/engine";
 import { PLAN, STREET_CLASS_LABEL } from "@/content/plan-meta";
-import { summarize } from "@/lib/summary";
+import { summaryBlocks } from "@/lib/summary";
+import { SummaryView } from "./Summary";
 import { FloorDiagram } from "./FloorDiagram";
 
 const fmt = (n: number) => n.toLocaleString("he-IL", { maximumFractionDigits: 1 });
 const yesNo = (v: boolean | null | undefined) => (v == null ? "לא אומת" : v ? "כן" : "לא");
 
-export const ReportSheet = forwardRef<HTMLDivElement, { rep: PotentialReport; address: string | null }>(function ReportSheet(
-  { rep, address },
+function Plain({ items }: { items: string[] }) {
+  return (
+    <ul className="plain">
+      {items.map((t, i) => (
+        <li key={i}>
+          <span className="mark" aria-hidden="true">•</span>
+          <span>{t}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export const ReportSheet = forwardRef<HTMLDivElement, { rep: PotentialReport; address: string | null; example?: string | null }>(function ReportSheet(
+  { rep, address, example },
   ref,
 ) {
   const b = rep.input;
@@ -19,6 +33,7 @@ export const ReportSheet = forwardRef<HTMLDivElement, { rep: PotentialReport; ad
         תכנית {PLAN.number} · קובץ פוטנציאל · {new Date().toLocaleDateString("he-IL")}
       </div>
       <h1>קובץ פוטנציאל תכנוני ראשוני</h1>
+      {example && <p style={{ border: "1px dashed #26313d", padding: 8, borderRadius: 6 }}><b>דוגמה להמחשה:</b> {example}. הנתונים אינם של בניין אמיתי.</p>}
       <p style={{ border: "1px solid #26313d", padding: 8, borderRadius: 6 }}>{rep.disclaimer}</p>
       <h3>מיקום ונתוני תשריט</h3>
       <table>
@@ -37,7 +52,7 @@ export const ReportSheet = forwardRef<HTMLDivElement, { rep: PotentialReport; ad
         <tbody>
           <tr><th>קומות קיימות</th><td>{b.existingFloors}</td><th>יח"ד קיימות</th><td>{b.existingUnits}</td></tr>
           <tr><th>שטח קומה טיפוסית</th><td>{fmt(b.typicalFloorArea)} מ"ר</td><th>שטח מגרש</th><td>{fmt(b.plotArea)} מ"ר</td></tr>
-          <tr><th>קומת קרקע</th><td>{b.groundFloor === "built" ? "בנויה" : "קומת עמודים"}</td><th>טעון חיזוק</th><td>{b.retrofitNeeded ? "כן" : "לא"}</td></tr>
+          <tr><th>קומת קרקע</th><td>{b.groundFloor === "built" ? "בנויה" : "קומת עמודים"}</td><th>טעון חיזוק</th><td>{b.retrofitNeeded ? "כן" : "לא"}{b.permitYear ? ` (היתר ${b.permitYear})` : ""}</td></tr>
           <tr><th>מרחבים מוגנים</th><td>{{ none: "אין", partial: "חלקי", full: "מלא" }[b.protectedSpaces]}</td><th>שימוש</th><td>{b.residential ? "מגורים" : "אחר"}</td></tr>
         </tbody>
       </table>
@@ -60,7 +75,7 @@ export const ReportSheet = forwardRef<HTMLDivElement, { rep: PotentialReport; ad
           ))}
         </tbody>
       </table>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginTop: 12 }}>
+      <div className="pdf-block" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginTop: 12 }}>
         {rep.routes.map((r) => (
           <div key={r.route} style={{ border: "1px solid #ccc", padding: 6 }}>
             <div style={{ fontSize: 12, marginBottom: 4 }}>{r.title}</div>
@@ -71,18 +86,18 @@ export const ReportSheet = forwardRef<HTMLDivElement, { rep: PotentialReport; ad
       <h3>פירוט והפניות לסעיפים</h3>
       {rep.routes.map((r) => (
         <div key={r.route} style={{ marginBottom: 8 }}>
-          <b>{r.title}</b>
-          <ul style={{ margin: "4px 0" }}>
-            {[...r.blockers, ...r.floorSteps.map((x) => ({ text: `${x.label}: ${x.floors < 1 ? `${Math.round(x.floors * 100)}%` : x.floors}`, section: x.section })), ...r.notes].map((x, i) => (
-              <li key={i}>{x.text} ({x.section})</li>
-            ))}
-          </ul>
+          <h4>{r.title}</h4>
+          <Plain
+            items={[...r.blockers, ...r.floorSteps.map((x) => ({ text: `${x.label}: ${x.floors < 1 ? `${Math.round(x.floors * 100)}%` : x.floors}`, section: x.section })), ...r.notes].map(
+              (x) => `${x.text} (${x.section})`,
+            )}
+          />
         </div>
       ))}
       <h3>סיכום</h3>
-      <ul>{summarize(rep).map((l, i) => <li key={i}>{l}</li>)}</ul>
+      <SummaryView blocks={summaryBlocks(rep)} />
       <h3>הנחות חישוב</h3>
-      <ul>{rep.assumptions.map((a, i) => <li key={i}>{a}</li>)}</ul>
+      <Plain items={rep.assumptions} />
     </div>
   );
 });
