@@ -88,3 +88,15 @@ export interface PotentialReport {
   assumptions: string[];
   disclaimer: string;
 }
+
+/** Indicative count of new apartments per route. Derived from RouteResult, never from the plan text. */
+export interface UnitEstimate {
+  route: RouteId;
+  eligible: boolean;
+  returnedArea: number; // m2 kept by the existing apartments, including the per-unit addition
+  realizableRights: number; // m2 of rights that fit under the maximum floor count
+  saleableArea: number; // m2 left for new apartments after the public allocation
+  newUnits: number; // whole apartments, rounded down
+  perExistingUnit: number; // newUnits / existingUnits, 2 decimals
+  residentsStay: boolean; // false on demolish + rebuild: temporary relocation
+}

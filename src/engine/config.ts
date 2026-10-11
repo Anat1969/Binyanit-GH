@@ -83,5 +83,12 @@ export const PUBLIC_ALLOCATION = {
   minFrontageM: 15,
 };
 
+/**
+ * Average gross area of a new apartment, used only to translate saleable area into an indicative
+ * number of new apartments. Not a plan parameter; the user can change it on the check page.
+ */
+export const ASSUMED_NEW_UNIT_AREA_M2 = 95;
+export const NEW_UNIT_AREA_RANGE = { min: 40, max: 200 };
+
 /** Used only to translate floors into an indicative height. Not a plan parameter. */
 export const ASSUMED_FLOOR_HEIGHT_M = 3.3;

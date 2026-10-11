@@ -53,6 +53,24 @@ export default async function PlanPage({ params }: { params: Promise<{ number: s
                 <h2 id={`${c.id}-t`} className="h2">{c.title}</h2>
                 <p className="chapter-lead">{c.lead}</p>
                 {c.paragraphs.map((p, j) => <p key={j} style={{ margin: 0 }}>{p}</p>)}
+                {c.table && (
+                  <div className="table-wrap">
+                    <table className="table rules" data-testid={`table-${c.id}`}>
+                      <thead>
+                        <tr>{c.table.head.map((h, k) => <th key={k} scope="col">{h}</th>)}</tr>
+                      </thead>
+                      <tbody>
+                        {c.table.rows.map(([k, ...cells]) => (
+                          <tr key={k}>
+                            <th scope="row">{k}</th>
+                            {cells.map((v, m) => <td key={m}>{v}</td>)}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {c.table.note && <p className="muted" style={{ margin: "8px 0 0", fontSize: 14 }}>{c.table.note}</p>}
+                  </div>
+                )}
                 {c.facts && (
                   <div className="facts-row">
                     {c.facts.map((f) => (

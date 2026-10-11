@@ -43,6 +43,9 @@ describe("pre-written answers", () => {
     ["איזה תמהיל דירות צריך", "unit-mix"],
     ["מה מקבלים על גן ילדים בפרויקט", "education"],
     ["מה התכסית בהריסה ובנייה", "coverage"],
+    ["איך אדע אם הרחוב שלי פעיל", "street-class"],
+    ["איזה מסלול כדאי לבניין שלנו?", "which-route"],
+    ["האם צריך לפנות את הדיירים?", "which-route"],
   ])("%s -> %s", (q, id) => expect(matchFaq(q)?.item.id).toBe(id));
 
   it("no confident answer for unrelated questions", () => {
