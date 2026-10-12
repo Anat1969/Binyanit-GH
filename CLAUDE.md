@@ -104,3 +104,10 @@ Next.js 15 (App Router) + Supabase (פרויקט משותף cultura-GH) + Vercel
 ## שלב 2
 - משיכה אוטומטית של נתוני בניין.
 - שכבת רובעים אמיתית (ב-ASHDODMAP הרובעים סכמטיים, לא לשימוש).
+
+## Lessons from the round of 11-12.10.2026 (the client: "excellent")
+- What worked: merging all the branches before every review; a table of tasks→status (docs/TASKS-2026-10-11.md); fixes at the system level (tokens, site.ts, PageHead, PageFlow, Prose) instead of page by page; full-page screenshots via a Playwright script at 1280 and 390; comparison with the live site when a feature fails locally.
+- What didn't work: 7 branches in parallel without integration; screenshots in the in-app browser (stuck); next build while the test server was running; a stale node_modules.
+- Open: React error 418 (render mismatch) on the quarter pages in the built version only, when switching between quarters quickly. Existed before the review, the page displays fine. Two Playwright tests fail on and off because of it.
+- Next upgrade (from the app-dna ledger): anchoring the sheet and the traffic appendix to coordinates and connecting them to the address check; a link that shares a calculation result; a presentation mode for the committee meeting.
+- The general method has moved to the skill `app-dna` (~/.claude/skills/app-dna). The integration branch: claude/integrate-all.
