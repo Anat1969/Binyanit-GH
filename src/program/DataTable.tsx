@@ -66,18 +66,26 @@ export function DataTable<T>({ data, columns, caption, footer, empty = "אין �
           )}
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-              ))}
+              {row.getVisibleCells().map((cell, i) =>
+                i === 0 ? (
+                  <th key={cell.id} scope="row" className="row-h">{flexRender(cell.column.columnDef.cell, cell.getContext())}</th>
+                ) : (
+                  <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                ),
+              )}
             </tr>
           ))}
         </tbody>
         {footer && (
           <tfoot>
             <tr>
-              {footer.map((f, i) => (
-                <td key={i} className="num">{f ?? ""}</td>
-              ))}
+              {footer.map((f, i) =>
+                i === 0 ? (
+                  <th key={i} scope="row" className="row-h">{f ?? ""}</th>
+                ) : (
+                  <td key={i} className="num">{f ?? ""}</td>
+                ),
+              )}
             </tr>
           </tfoot>
         )}

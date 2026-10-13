@@ -4,8 +4,10 @@ import { usePathname } from "next/navigation";
 
 const LINKS = [
   { href: "/", label: "ראשי" },
-  { href: "/plan/603-0972307", label: "התכנית" },
+  { href: "/plan/603-0972307", label: "התכנית בקצרה" },
+  { href: "/provisions", label: "תכנית" },
   { href: "/check", label: "בדיקת כתובת" },
+  { href: "/sheet", label: "מפת התשריט" },
   { href: "/program", label: "צורכי ציבור" },
   { href: "/documents", label: "מסמכים" },
   { href: "/qa", label: "שאלות על התכנית" },
