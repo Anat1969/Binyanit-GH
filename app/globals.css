@@ -123,8 +123,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .nav a:hover { background: var(--surface); color: var(--ink); }
 .nav a[aria-current="page"] { background: var(--accent); color: var(--on-accent); }
+.site-header ai-menu { flex: 0 0 auto; }
 @media (max-width: 719px) {
-  .nav { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; margin: 0; }
+  .site-header ai-menu { margin-inline-start: auto; margin-block: 8px; }
+  .nav { order: 1; width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; margin: 0; }
   .nav a { flex: 0 0 auto; }
 }
 
