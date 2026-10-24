@@ -12,5 +12,6 @@ export async function POST(req: Request) {
   const { data, error } = await supabase().rpc("binyanit_admin_replace_plan_text", { p_code: code, p_source: b.source.slice(0, 120), p_rows: b.rows });
   if (error) return NextResponse.json({ error: error.message }, { status: 502 });
   revalidatePath("/qa");
+  revalidatePath("/provisions");
   return NextResponse.json({ rows: data });
 }

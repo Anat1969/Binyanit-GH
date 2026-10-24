@@ -11,6 +11,7 @@ import {
   PROTECTION_BASE_FULL_FLOORS,
   PROTECTION_M2_PER_UNIT,
   PUBLIC_ALLOCATION,
+  RETROFIT_PERMIT_BEFORE_YEAR,
   RETROFIT_BASE_FULL_FLOORS,
   RETROFIT_M2_PER_UNIT,
   SEC,
@@ -51,7 +52,16 @@ export function validateInput(b: BuildingInput): string[] {
   if (!(b.typicalFloorArea > 0)) errors.push("שטח קומה טיפוסית חייב להיות גדול מאפס");
   if (!(b.plotArea > 0)) errors.push("שטח המגרש חייב להיות גדול מאפס");
   if (b.frontageLength != null && !(b.frontageLength > 0)) errors.push("אורך החזית חייב להיות גדול מאפס");
+  if (b.permitYear != null && !(Number.isInteger(b.permitYear) && b.permitYear >= 1900 && b.permitYear <= 2100))
+    errors.push("שנת היתר הבנייה חייבת להיות שנה בת 4 ספרות");
+  if (b.permitYear == null && b.retrofitNeeded == null) errors.push("יש להזין את שנת היתר הבנייה");
   return errors;
+}
+
+/** Retrofit status follows from the permit year (see RETROFIT_PERMIT_BEFORE_YEAR). */
+export function needsRetrofit(b: BuildingInput): boolean {
+  if (b.permitYear != null) return b.permitYear < RETROFIT_PERMIT_BEFORE_YEAR;
+  return Boolean(b.retrofitNeeded);
 }
 
 export function isSmallBuilding(b: BuildingInput): boolean {
@@ -177,8 +187,12 @@ export function computeProtection(b: BuildingInput, site: SiteContext): RouteRes
 
 export function computeRetrofit(b: BuildingInput, site: SiteContext): RouteResult {
   const res = baseResult("retrofit");
-  if (!b.retrofitNeeded) {
-    res.blockers.push(c("הבניין אינו טעון חיזוק מפני רעידות אדמה", SEC.retrofit));
+  if (!needsRetrofit(b)) {
+    res.blockers.push(
+      b.permitYear != null
+        ? c(`היתר הבנייה ניתן ב-${b.permitYear}, אחרי 1.1.${RETROFIT_PERMIT_BEFORE_YEAR}, ולכן הבניין אינו טעון חיזוק מפני רעידות אדמה`, SEC.retrofitDef)
+        : c("הבניין אינו טעון חיזוק מפני רעידות אדמה", SEC.retrofit),
+    );
   }
   if (!b.residential) {
     const steps: FloorStep[] = [
@@ -316,5 +330,11 @@ export function computePotential(b: BuildingInput, site: SiteContext): Potential
     'שטח בנוי למבחן "מבנה קטן" = שטח קומה טיפוסית × מספר קומות.',
   );
 
-  return { input: b, site, globalBlockers, routes, assumptions, disclaimer: DISCLAIMER };
+  if (b.permitYear != null) {
+    assumptions.push(
+      `טעון חיזוק נגזר משנת ההיתר: היתר לפני 1.1.${RETROFIT_PERMIT_BEFORE_YEAR} = טעון חיזוק, כמו בתמ"א 38. לאימות מול הגדרות התכנית ומול חוות דעת מהנדס.`,
+    );
+  }
+
+  return { input: { ...b, retrofitNeeded: needsRetrofit(b) }, site, globalBlockers, routes, assumptions, disclaimer: DISCLAIMER };
 }
