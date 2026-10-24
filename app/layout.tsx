@@ -22,6 +22,11 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="he" dir="rtl">
+      <head>
+        {/* The A&I logo button: https://github.com/Anat1969/AppOfApp-GH/blob/main/docs/ai-menu-standard.md */}
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="https://appofapp-gh.vercel.app/ai-menu.js" />
+      </head>
       <body>
         <a href="#main" className="label" style={{ position: "absolute", insetInlineStart: -9999 }}>
           דילוג לתוכן
@@ -33,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span>PLAN {PLAN.number}</span>
             </Link>
             <Nav />
+            <ai-menu />
           </div>
         </header>
         <main id="main">{children}</main>
@@ -47,4 +53,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </body>
     </html>
   );
+}
+
+declare module "react" {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace JSX {
+    interface IntrinsicElements {
+      "ai-menu": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & { chat?: string; research?: string };
+    }
+  }
 }
