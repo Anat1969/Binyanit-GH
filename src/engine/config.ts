@@ -19,7 +19,15 @@ export const SEC = {
   discretion: "7.2.1, 6.1.3",
   exclusions: "7.2",
   tama38: "7.2.4",
+  retrofitDef: 'הגדרות, לפי תמ"א 38 (לאימות)',
 } as const;
+
+/**
+ * "Needs earthquake retrofit" is derived from the building permit year, not chosen by the user.
+ * Assumption to verify against the plan's definitions: as in TAMA 38, a building whose permit was
+ * issued before 1.1.1980 is treated as needing retrofit.
+ */
+export const RETROFIT_PERMIT_BEFORE_YEAR = 1980;
 
 /** Floor-count band used by Table 5. */
 export type FloorBand = "2" | "3" | "4-5" | "6+";
@@ -74,6 +82,13 @@ export const PUBLIC_ALLOCATION = {
   maxPctOfRights: 15,
   minFrontageM: 15,
 };
+
+/**
+ * Average gross area of a new apartment, used only to translate saleable area into an indicative
+ * number of new apartments. Not a plan parameter; the user can change it on the check page.
+ */
+export const ASSUMED_NEW_UNIT_AREA_M2 = 95;
+export const NEW_UNIT_AREA_RANGE = { min: 40, max: 200 };
 
 /** Used only to translate floors into an indicative height. Not a plan parameter. */
 export const ASSUMED_FLOOR_HEIGHT_M = 3.3;

@@ -3,6 +3,16 @@ import { useEffect, useRef, useState } from "react";
 import type { Map as MlMap, Marker } from "maplibre-gl";
 
 const ASHDOD: [number, number] = [34.655, 31.8];
+// Free basemaps without an API key: OpenFreeMap vector streets, Esri World Imagery for aerial photos.
+const STYLE_URL = "https://tiles.openfreemap.org/styles/positron";
+const OSM_RASTER = {
+  version: 8 as const,
+  sources: {
+    osm: { type: "raster" as const, tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize: 256, attribution: "© OpenStreetMap contributors" },
+  },
+  layers: [{ id: "osm", type: "raster" as const, source: "osm", paint: { "raster-saturation": -0.8 } }],
+};
+const AERIAL_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
 interface Props {
   point: { lat: number; lon: number } | null;
@@ -17,36 +27,35 @@ export default function MapView({ point, onPick }: Props) {
   pickRef.current = onPick;
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [boundary, setBoundary] = useState<"loading" | "loaded" | "missing" | "error">("loading");
+  const [aerial, setAerial] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         const ml = (await import("maplibre-gl")).default;
+        let style: unknown = OSM_RASTER;
+        try {
+          const res = await fetch(STYLE_URL, { signal: AbortSignal.timeout(6000) });
+          if (res.ok) style = await res.json();
+        } catch {
+          // Vector style unavailable: keep the OpenStreetMap raster tiles.
+        }
         if (cancelled || !el.current) return;
         const m = new ml.Map({
           container: el.current,
           center: ASHDOD,
           zoom: 12.4,
           attributionControl: { compact: true },
-          style: {
-            version: 8,
-            sources: {
-              base: {
-                type: "raster",
-                tiles: ["a", "b", "c"].map((s) => `https://${s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png`),
-                tileSize: 256,
-                attribution: "© OpenStreetMap contributors © CARTO",
-              },
-            },
-            layers: [{ id: "base", type: "raster", source: "base", paint: { "raster-saturation": -1 } }],
-          },
+          style: style as never,
         });
         map.current = m;
         m.addControl(new ml.NavigationControl({ showCompass: false }), "top-left");
         m.on("click", (e) => pickRef.current(e.lngLat.lat, e.lngLat.lng));
         m.on("load", async () => {
           setState("ready");
+          m.addSource("aerial", { type: "raster", tiles: [AERIAL_TILES], tileSize: 256, maxzoom: 19, attribution: "Imagery © Esri, Maxar, Earthstar Geographics" });
+          m.addLayer({ id: "aerial", type: "raster", source: "aerial", layout: { visibility: "none" } });
           try {
             const res = await fetch("/api/layers/plan_boundary");
             if (!res.ok) throw new Error();
@@ -88,6 +97,12 @@ export default function MapView({ point, onPick }: Props) {
     })();
   }, [point, state]);
 
+  useEffect(() => {
+    const m = map.current;
+    if (!m || state !== "ready" || !m.getLayer("aerial")) return;
+    m.setLayoutProperty("aerial", "visibility", aerial ? "visible" : "none");
+  }, [aerial, state]);
+
   return (
     <div className="map" data-testid="map">
       <div ref={el} style={{ position: "absolute", inset: 0 }} />
@@ -96,6 +111,12 @@ export default function MapView({ point, onPick }: Props) {
         <div className="state warn" style={{ position: "absolute", inset: 16 }}>
           <b>המפה אינה זמינה בדפדפן זה</b>
           אפשר להמשיך בחיפוש כתובת או בהזנה ידנית.
+        </div>
+      )}
+      {state === "ready" && (
+        <div className="map-toggle seg" role="group" aria-label="סוג מפה">
+          <button type="button" aria-pressed={!aerial} onClick={() => setAerial(false)}>מפה</button>
+          <button type="button" aria-pressed={aerial} onClick={() => setAerial(true)}>תצלום אוויר</button>
         </div>
       )}
       {state === "ready" && (
