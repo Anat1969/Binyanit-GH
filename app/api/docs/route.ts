@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { serverSupabase } from "@/lib/supabase";
 
 // Open editing by Anat's decision (11.10.2026): anyone may add, rename, reclassify or remove documents.
 // Removal is soft (archived), so nothing is lost.
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const id = typeof b.id === "string" && UUID.test(b.id) ? b.id : null;
   const fileUrl = typeof b.file_url === "string" && /^https:\/\//.test(b.file_url) ? b.file_url : "";
   if (!id && !fileUrl) return NextResponse.json({ error: "חסר קובץ" }, { status: 400 });
-  const { data, error } = await supabase().rpc("binyanit_doc_save", {
+  const { data, error } = await serverSupabase().rpc("binyanit_doc_save", {
     p_id: id,
     p_title: title,
     p_category: b.category,
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   const id = new URL(req.url).searchParams.get("id") ?? "";
   if (!UUID.test(id)) return NextResponse.json({ error: "חסר מזהה" }, { status: 400 });
-  const { error } = await supabase().rpc("binyanit_doc_archive", { p_id: id });
+  const { error } = await serverSupabase().rpc("binyanit_doc_archive", { p_id: id });
   if (error) return NextResponse.json({ error: "ההסרה נכשלה" }, { status: 502 });
   revalidatePath("/documents");
   return NextResponse.json({ ok: true });

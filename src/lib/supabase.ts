@@ -10,3 +10,15 @@ export function supabase(): SupabaseClient {
   if (!client) client = createClient(URL, KEY, { auth: { persistSession: false } });
   return client;
 }
+
+// Server-only client for privileged writes (documents). Uses the service role key when it is set in Vercel,
+// so the doc RPCs can be revoked from anon. Falls back to the public client until the key exists.
+let serverClient: SupabaseClient | null = null;
+
+export function serverSupabase(): SupabaseClient {
+  if (typeof window !== "undefined") throw new Error("serverSupabase is server-only");
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) return supabase();
+  if (!serverClient) serverClient = createClient(URL, key, { auth: { persistSession: false } });
+  return serverClient;
+}
